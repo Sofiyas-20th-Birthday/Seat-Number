@@ -642,6 +642,18 @@
         content: "";
       }
 
+      .seat-context {
+        margin: 11px auto 0;
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.45;
+      }
+
+      .seat-context strong {
+        color: var(--ink);
+        font-weight: 720;
+      }
+
       .venue-map-viewport {
         position: relative;
         display: block;
@@ -771,6 +783,14 @@
         box-shadow: 0 0 0 6px rgba(240, 90, 60, 0.14);
       }
 
+      .map-seat.neighbour {
+        width: 17px;
+        height: 17px;
+        border-color: #b8891d;
+        background: #f6dfaa;
+        box-shadow: 0 0 0 4px rgba(184, 137, 29, 0.1);
+      }
+
       .map-you {
         position: absolute;
         z-index: 4;
@@ -796,12 +816,23 @@
         font-size: 0.73rem;
       }
 
-      .map-key::before {
+      .map-key-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .map-key-dot {
         width: 9px;
         height: 9px;
         border-radius: 50%;
         background: var(--accent);
         content: "";
+      }
+
+      .map-key-dot.neighbour {
+        border: 1px solid #b8891d;
+        background: #f6dfaa;
       }
 
       .map-help {
@@ -1008,7 +1039,9 @@
     </div>
 
     <script>
-      // The seat numbers follow the clockwise order in the supplied seating plan.
+      // Seats follow the photographed plans: round tables start at the bottom and
+      // continue through the right-hand arc; rectangular tables start at the top
+      // of the right side and return from bottom to top along the left side.
       const guests = [
         { name: "Sholpan Krymova", seat: "01", table: "Oncidium", tableNumber: "1" },
         { name: "Umut Shayakhmetova", seat: "02", table: "Oncidium", tableNumber: "1" },
@@ -1037,31 +1070,31 @@
         { name: "Askar Izbassarov", seat: "25", table: "Oncidium", tableNumber: "1" },
         { name: "Zaure Izbassarova", seat: "26", table: "Oncidium", tableNumber: "1" },
 
-        { name: "Asyl Karibayev", seat: "01", table: "Amaranth", tableNumber: "2" },
-        { name: "Adam Hogg", seat: "02", table: "Amaranth", tableNumber: "2" },
-        { name: "Adl Eskendirov", seat: "03", table: "Amaranth", tableNumber: "2" },
-        { name: "Evgenii Emelyanov", seat: "04", table: "Amaranth", tableNumber: "2" },
-        { name: "Panuar Karibayeva", seat: "05", table: "Amaranth", tableNumber: "2" },
-        { name: "Diana Hogg", seat: "06", table: "Amaranth", tableNumber: "2" },
+        { name: "Evgenii Emelyanov", seat: "01", table: "Amaranth", tableNumber: "2" },
+        { name: "Adl Eskendirov", seat: "02", table: "Amaranth", tableNumber: "2" },
+        { name: "Adam Hogg", seat: "03", table: "Amaranth", tableNumber: "2" },
+        { name: "Panuar Karibayeva", seat: "04", table: "Amaranth", tableNumber: "2" },
+        { name: "Diana Hogg", seat: "05", table: "Amaranth", tableNumber: "2" },
+        { name: "Asyl Karibayev", seat: "06", table: "Amaranth", tableNumber: "2" },
 
-        { name: "Arslan Abulgazin", seat: "01", table: "Dandelion", tableNumber: "3" },
-        { name: "Saken Shayakhmetov", seat: "02", table: "Dandelion", tableNumber: "3" },
-        { name: "Timur Suleimenov", seat: "03", table: "Dandelion", tableNumber: "3" },
-        { name: "Altay Askar", seat: "04", table: "Dandelion", tableNumber: "3" },
-        { name: "Amina Ramazzanova", seat: "05", table: "Dandelion", tableNumber: "3" },
-        { name: "Umitzhan Askar", seat: "06", table: "Dandelion", tableNumber: "3" },
-        { name: "Nour Rizk", seat: "07", table: "Dandelion", tableNumber: "3" },
-        { name: "Sara Hekal", seat: "08", table: "Dandelion", tableNumber: "3" },
-        { name: "Alina Abulgazina", seat: "09", table: "Dandelion", tableNumber: "3" },
-        { name: "Nursultan Suleimenov", seat: "10", table: "Dandelion", tableNumber: "3" },
-        { name: "Bogdan Aksenenko", seat: "11", table: "Dandelion", tableNumber: "3" },
-        { name: "Daniyar Shayakhmetov", seat: "12", table: "Dandelion", tableNumber: "3" },
-        { name: "Adema Shayakhmetova", seat: "13", table: "Dandelion", tableNumber: "3" },
-        { name: "Aya Izbassarova", seat: "14", table: "Dandelion", tableNumber: "3" },
-        { name: "Sara Suleimenova", seat: "15", table: "Dandelion", tableNumber: "3" },
-        { name: "Dana Shayakhmetova", seat: "16", table: "Dandelion", tableNumber: "3" },
-        { name: "Diar Izbassarov", seat: "17", table: "Dandelion", tableNumber: "3" },
-        { name: "Alan Aksenenko", seat: "18", table: "Dandelion", tableNumber: "3" },
+        { name: "Alan Aksenenko", seat: "01", table: "Dandelion", tableNumber: "3" },
+        { name: "Diar Izbassarov", seat: "02", table: "Dandelion", tableNumber: "3" },
+        { name: "Dana Shayakhmetova", seat: "03", table: "Dandelion", tableNumber: "3" },
+        { name: "Sara Suleimenova", seat: "04", table: "Dandelion", tableNumber: "3" },
+        { name: "Aya Izbassarova", seat: "05", table: "Dandelion", tableNumber: "3" },
+        { name: "Adema Shayakhmetova", seat: "06", table: "Dandelion", tableNumber: "3" },
+        { name: "Daniyar Shayakhmetov", seat: "07", table: "Dandelion", tableNumber: "3" },
+        { name: "Bogdan Aksenenko", seat: "08", table: "Dandelion", tableNumber: "3" },
+        { name: "Nursultan Suleimenov", seat: "09", table: "Dandelion", tableNumber: "3" },
+        { name: "Alina Abulgazina", seat: "10", table: "Dandelion", tableNumber: "3" },
+        { name: "Sara Hekal", seat: "11", table: "Dandelion", tableNumber: "3" },
+        { name: "Nour Rizk", seat: "12", table: "Dandelion", tableNumber: "3" },
+        { name: "Umitzhan Askar", seat: "13", table: "Dandelion", tableNumber: "3" },
+        { name: "Amina Ramazzanova", seat: "14", table: "Dandelion", tableNumber: "3" },
+        { name: "Altay Askar", seat: "15", table: "Dandelion", tableNumber: "3" },
+        { name: "Timur Suleimenov", seat: "16", table: "Dandelion", tableNumber: "3" },
+        { name: "Saken Shayakhmetov", seat: "17", table: "Dandelion", tableNumber: "3" },
+        { name: "Arslan Abulgazin", seat: "18", table: "Dandelion", tableNumber: "3" },
 
         { name: "Sofiya", seat: "01", table: "Daisy", tableNumber: "4" },
         { name: "Catherine", seat: "02", table: "Daisy", tableNumber: "4" },
@@ -1080,28 +1113,28 @@
         { name: "Soraya", seat: "15", table: "Daisy", tableNumber: "4" },
         { name: "Katerina", seat: "16", table: "Daisy", tableNumber: "4" },
 
-        { name: "Alexandra", seat: "01", table: "Craspedia", tableNumber: "5" },
-        { name: "Kira", seat: "02", table: "Craspedia", tableNumber: "5" },
-        { name: "Julia", seat: "03", table: "Craspedia", tableNumber: "5" },
-        { name: "Temirlan", seat: "04", table: "Craspedia", tableNumber: "5" },
-        { name: "Askar", seat: "05", table: "Craspedia", tableNumber: "5" },
-        { name: "Alken", seat: "06", table: "Craspedia", tableNumber: "5" },
-        { name: "Kristina", seat: "07", table: "Craspedia", tableNumber: "5" },
-        { name: "Dinara", seat: "08", table: "Craspedia", tableNumber: "5" },
+        { name: "Kira", seat: "01", table: "Craspedia", tableNumber: "5" },
+        { name: "Julia", seat: "02", table: "Craspedia", tableNumber: "5" },
+        { name: "Temirlan", seat: "03", table: "Craspedia", tableNumber: "5" },
+        { name: "Askar", seat: "04", table: "Craspedia", tableNumber: "5" },
+        { name: "Alken", seat: "05", table: "Craspedia", tableNumber: "5" },
+        { name: "Kristina", seat: "06", table: "Craspedia", tableNumber: "5" },
+        { name: "Dinara", seat: "07", table: "Craspedia", tableNumber: "5" },
+        { name: "Alexandra", seat: "08", table: "Craspedia", tableNumber: "5" },
 
-        { name: "Tiana", seat: "01", table: "Nerine", tableNumber: "6" },
-        { name: "Leila", seat: "02", table: "Nerine", tableNumber: "6" },
-        { name: "Alicia", seat: "03", table: "Nerine", tableNumber: "6" },
-        { name: "Zhanya", seat: "04", table: "Nerine", tableNumber: "6" },
-        { name: "Aliar", seat: "05", table: "Nerine", tableNumber: "6" },
-        { name: "Anuar", seat: "06", table: "Nerine", tableNumber: "6" },
+        { name: "Timur I.", seat: "01", table: "Nerine", tableNumber: "6" },
+        { name: "Elvin", seat: "02", table: "Nerine", tableNumber: "6" },
+        { name: "Roman", seat: "03", table: "Nerine", tableNumber: "6" },
+        { name: "H.S.H. Princess Leatitia", seat: "04", table: "Nerine", tableNumber: "6" },
+        { name: "Sonya", seat: "05", table: "Nerine", tableNumber: "6" },
+        { name: "Aidan", seat: "06", table: "Nerine", tableNumber: "6" },
         { name: "Tore", seat: "07", table: "Nerine", tableNumber: "6" },
-        { name: "Aidan", seat: "08", table: "Nerine", tableNumber: "6" },
-        { name: "Sonya", seat: "09", table: "Nerine", tableNumber: "6" },
-        { name: "H.S.H. Princess Leatitia", seat: "10", table: "Nerine", tableNumber: "6" },
-        { name: "Roman", seat: "11", table: "Nerine", tableNumber: "6" },
-        { name: "Elvin", seat: "12", table: "Nerine", tableNumber: "6" },
-        { name: "Timur I.", seat: "13", table: "Nerine", tableNumber: "6" }
+        { name: "Anuar", seat: "08", table: "Nerine", tableNumber: "6" },
+        { name: "Aliar", seat: "09", table: "Nerine", tableNumber: "6" },
+        { name: "Zhanya", seat: "10", table: "Nerine", tableNumber: "6" },
+        { name: "Alicia", seat: "11", table: "Nerine", tableNumber: "6" },
+        { name: "Leila", seat: "12", table: "Nerine", tableNumber: "6" },
+        { name: "Tiana", seat: "13", table: "Nerine", tableNumber: "6" }
       ];
 
       const input = document.querySelector("#guest-search");
@@ -1155,24 +1188,94 @@
           .replace(/[\u0300-\u036f]/g, "")
           .trim();
 
+      function typoDistance(first, second) {
+        const rows = Array.from(
+          { length: first.length + 1 },
+          () => Array(second.length + 1).fill(0)
+        );
+
+        for (let row = 0; row <= first.length; row += 1) rows[row][0] = row;
+        for (let column = 0; column <= second.length; column += 1) {
+          rows[0][column] = column;
+        }
+
+        for (let row = 1; row <= first.length; row += 1) {
+          for (let column = 1; column <= second.length; column += 1) {
+            const substitutionCost =
+              first[row - 1] === second[column - 1] ? 0 : 1;
+            rows[row][column] = Math.min(
+              rows[row - 1][column] + 1,
+              rows[row][column - 1] + 1,
+              rows[row - 1][column - 1] + substitutionCost
+            );
+
+            if (
+              row > 1 &&
+              column > 1 &&
+              first[row - 1] === second[column - 2] &&
+              first[row - 2] === second[column - 1]
+            ) {
+              rows[row][column] = Math.min(
+                rows[row][column],
+                rows[row - 2][column - 2] + 1
+              );
+            }
+          }
+        }
+
+        return rows[first.length][second.length];
+      }
+
       function scoreName(name, query) {
         const target = normalize(name);
         const words = target.split(/\s+/);
+        let bestScore = 0;
 
         if (target === query) return 1000;
         if (target.startsWith(query)) return 800 - target.length;
         if (words.some((word) => word.startsWith(query))) return 650 - target.length;
 
         const index = target.indexOf(query);
-        if (index !== -1) return 500 - index * 10 - target.length;
+        if (index !== -1) bestScore = 500 - index * 10 - target.length;
 
         let cursor = 0;
         for (const character of target) {
           if (character === query[cursor]) cursor += 1;
-          if (cursor === query.length) return 250 - target.length;
+          if (cursor === query.length) {
+            bestScore = Math.max(bestScore, 250 - target.length);
+            break;
+          }
         }
 
-        return 0;
+        if (query.length >= 2) {
+          const compactTarget = target.replace(/[^a-z0-9]/g, "");
+          const candidates = [target, compactTarget, ...words];
+
+          for (const candidate of candidates) {
+            const distance = typoDistance(candidate, query);
+            const longestLength = Math.max(candidate.length, query.length);
+            const similarity = 1 - distance / longestLength;
+            const allowedDistance = Math.max(1, Math.ceil(query.length * 0.3));
+            const isShortNameTypo =
+              query.length === 2 && candidate.length === 3 && distance === 1;
+
+            if (
+              isShortNameTypo ||
+              (query.length >= 3 &&
+                distance <= allowedDistance &&
+                similarity >= 0.65)
+            ) {
+              bestScore = Math.max(
+                bestScore,
+                (isShortNameTypo ? 610 : 340) +
+                  Math.round(similarity * 100) -
+                  distance * 8
+              );
+            }
+          }
+        }
+
+        return bestScore;
       }
 
       function safeHighlightedName(name, query) {
@@ -1218,7 +1321,7 @@
         Dandelion: { shape: "rectangle", firstSideSeats: 9 },
         Daisy: { shape: "round" },
         Craspedia: { shape: "round" },
-        Nerine: { shape: "rectangle", firstSideSeats: 6 }
+        Nerine: { shape: "rectangle", firstSideSeats: 7 }
       };
 
       const venueTables = [
@@ -1325,6 +1428,45 @@
         return { x: 24, y: 92 - progress * 84 };
       }
 
+      function getSeatContext(guest) {
+        const tableGuests = guests.filter(
+          (person) => person.tableNumber === guest.tableNumber
+        );
+        const index = tableGuests.indexOf(guest);
+        const layout = tableLayouts[guest.table];
+        const neighbours = [];
+        let positionLabel = "";
+
+        if (layout.shape === "round") {
+          neighbours.push(
+            tableGuests[(index - 1 + tableGuests.length) % tableGuests.length],
+            tableGuests[(index + 1) % tableGuests.length]
+          );
+
+          const position = getSeatPosition(index, tableGuests.length, layout);
+          const vertical = position.y < 35 ? "top" : position.y > 65 ? "bottom" : "";
+          const horizontal = position.x < 35 ? "left" : position.x > 65 ? "right" : "";
+          positionLabel = `${[vertical, horizontal].filter(Boolean).join("-") || "middle"} of the round table`;
+        } else {
+          const firstSideSeats = layout.firstSideSeats;
+          const sideStart = index < firstSideSeats ? 0 : firstSideSeats;
+          const sideEnd = index < firstSideSeats
+            ? firstSideSeats - 1
+            : tableGuests.length - 1;
+
+          if (index > sideStart) neighbours.push(tableGuests[index - 1]);
+          if (index < sideEnd) neighbours.push(tableGuests[index + 1]);
+          positionLabel = `${index < firstSideSeats ? "right" : "left"} side of the table`;
+        }
+
+        return { neighbours, positionLabel };
+      }
+
+      function formatNeighbourNames(neighbours) {
+        if (neighbours.length === 1) return neighbours[0].name;
+        return `${neighbours[0].name} and ${neighbours[1].name}`;
+      }
+
       function renderVenueTable(table, guest) {
         const isSelected = table.number === guest.tableNumber;
         const tableGuests = isSelected
@@ -1336,13 +1478,15 @@
 
         if (isSelected) {
           const selectedIndex = tableGuests.indexOf(guest);
+          const { neighbours } = getSeatContext(guest);
           markers = tableGuests
             .map((person, index) => {
               const position = getSeatPosition(index, tableGuests.length, layout);
               const selected = index === selectedIndex ? " selected" : "";
+              const neighbour = neighbours.includes(person) ? " neighbour" : "";
               return `
                 <span
-                  class="map-seat${selected}"
+                  class="map-seat${selected}${neighbour}"
                   style="left:${position.x}%; top:${position.y}%"
                   aria-hidden="true"
                 ></span>
@@ -1387,25 +1531,35 @@
       }
 
       function renderVenueMap(guest) {
+        const { neighbours, positionLabel } = getSeatContext(guest);
+        const neighbourNames = formatNeighbourNames(neighbours);
         return `
           <div
             class="venue-map-viewport"
             role="img"
-            aria-label="Venue map centered on ${guest.table}. Your exact place is highlighted."
+            aria-label="Venue map centered on ${guest.table}. Seat ${guest.seat}, ${positionLabel}. Beside ${neighbourNames}."
           >
             <div class="venue-map">
               ${venueTables.map((table) => renderVenueTable(table, guest)).join("")}
             </div>
           </div>
-          <p class="map-key">Your seat is highlighted</p>
+          <p class="map-key">
+            <span class="map-key-item"><span class="map-key-dot"></span>Your seat</span>
+            <span class="map-key-item"><span class="map-key-dot neighbour"></span>Beside you</span>
+          </p>
           <p class="map-help">Drag to explore the full venue</p>
         `;
       }
 
       function renderMapExperience(guest) {
+        const { neighbours, positionLabel } = getSeatContext(guest);
         return `
           <div class="map-wrap">
             <p class="map-heading">Your exact position</p>
+            <p class="seat-context">
+              Seat ${guest.seat} · ${positionLabel}<br>
+              Beside <strong>${formatNeighbourNames(neighbours)}</strong>
+            </p>
             ${renderVenueMap(guest)}
           </div>
         `;
@@ -1485,7 +1639,7 @@
           }))
           .filter((item) => item.score > 0)
           .sort((a, b) => b.score - a.score || a.guest.name.localeCompare(b.guest.name))
-          .slice(0, 5);
+          .slice(0, query.length <= 2 ? 10 : 5);
 
         if (!matches.length) {
           showNoResults();
