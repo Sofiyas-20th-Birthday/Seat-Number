@@ -791,6 +791,12 @@
         box-shadow: 0 0 0 4px rgba(184, 137, 29, 0.1);
       }
 
+      .map-seat.empty {
+        border-style: dashed;
+        background: transparent;
+        opacity: 0.62;
+      }
+
       .map-you {
         position: absolute;
         z-index: 4;
@@ -833,6 +839,11 @@
       .map-key-dot.neighbour {
         border: 1px solid #b8891d;
         background: #f6dfaa;
+      }
+
+      .map-key-dot.empty {
+        border: 1px dashed #9b9d94;
+        background: transparent;
       }
 
       .map-help {
@@ -1103,15 +1114,16 @@
         { name: "Amalia", seat: "05", table: "Daisy", tableNumber: "4" },
         { name: "Carmen", seat: "06", table: "Daisy", tableNumber: "4" },
         { name: "Anwar", seat: "07", table: "Daisy", tableNumber: "4" },
-        { name: "Isabella", seat: "08", table: "Daisy", tableNumber: "4" },
-        { name: "Angie", seat: "09", table: "Daisy", tableNumber: "4" },
-        { name: "Timur A.", seat: "10", table: "Daisy", tableNumber: "4" },
-        { name: "Alexia", seat: "11", table: "Daisy", tableNumber: "4" },
-        { name: "Dias K.", seat: "12", table: "Daisy", tableNumber: "4" },
-        { name: "Polina", seat: "13", table: "Daisy", tableNumber: "4" },
-        { name: "Timur K.", seat: "14", table: "Daisy", tableNumber: "4" },
-        { name: "Soraya", seat: "15", table: "Daisy", tableNumber: "4" },
-        { name: "Katerina", seat: "16", table: "Daisy", tableNumber: "4" },
+        { name: "Elvin", seat: "08", table: "Daisy", tableNumber: "4" },
+        { name: "Isabella", seat: "09", table: "Daisy", tableNumber: "4" },
+        { name: "Angie", seat: "10", table: "Daisy", tableNumber: "4" },
+        { name: "Timur A.", seat: "11", table: "Daisy", tableNumber: "4" },
+        { name: "Alexia", seat: "12", table: "Daisy", tableNumber: "4" },
+        { name: "Dias K.", seat: "13", table: "Daisy", tableNumber: "4" },
+        { name: "Polina", seat: "14", table: "Daisy", tableNumber: "4" },
+        { name: "Timur K.", seat: "15", table: "Daisy", tableNumber: "4" },
+        { name: "Soraya", seat: "16", table: "Daisy", tableNumber: "4" },
+        { name: "Katerina", seat: "17", table: "Daisy", tableNumber: "4" },
 
         { name: "Kira", seat: "01", table: "Craspedia", tableNumber: "5" },
         { name: "Julia", seat: "02", table: "Craspedia", tableNumber: "5" },
@@ -1123,17 +1135,16 @@
         { name: "Alexandra", seat: "08", table: "Craspedia", tableNumber: "5" },
 
         { name: "Timur I.", seat: "01", table: "Nerine", tableNumber: "6" },
-        { name: "Elvin", seat: "02", table: "Nerine", tableNumber: "6" },
+        { name: "Sonya", seat: "02", table: "Nerine", tableNumber: "6" },
         { name: "Roman", seat: "03", table: "Nerine", tableNumber: "6" },
         { name: "H.S.H. Princess Leatitia", seat: "04", table: "Nerine", tableNumber: "6" },
-        { name: "Sonya", seat: "05", table: "Nerine", tableNumber: "6" },
+        { name: "Leila", seat: "05", table: "Nerine", tableNumber: "6" },
         { name: "Aidan", seat: "06", table: "Nerine", tableNumber: "6" },
         { name: "Tore", seat: "07", table: "Nerine", tableNumber: "6" },
         { name: "Anuar", seat: "08", table: "Nerine", tableNumber: "6" },
         { name: "Aliar", seat: "09", table: "Nerine", tableNumber: "6" },
         { name: "Zhanya", seat: "10", table: "Nerine", tableNumber: "6" },
         { name: "Alicia", seat: "11", table: "Nerine", tableNumber: "6" },
-        { name: "Leila", seat: "12", table: "Nerine", tableNumber: "6" },
         { name: "Tiana", seat: "13", table: "Nerine", tableNumber: "6" }
       ];
 
@@ -1321,7 +1332,7 @@
         Dandelion: { shape: "rectangle", firstSideSeats: 9 },
         Daisy: { shape: "round" },
         Craspedia: { shape: "round" },
-        Nerine: { shape: "rectangle", firstSideSeats: 7 }
+        Nerine: { shape: "rectangle", firstSideSeats: 7, firstSide: "left" }
       };
 
       const venueTables = [
@@ -1416,53 +1427,69 @@
         }
 
         const firstSideSeats = layout.firstSideSeats;
+        const firstSideX = layout.firstSide === "left" ? 24 : 76;
+        const secondSideX = layout.firstSide === "left" ? 76 : 24;
         if (index < firstSideSeats) {
           const progress = firstSideSeats === 1 ? 0.5 : index / (firstSideSeats - 1);
-          return { x: 76, y: 8 + progress * 84 };
+          return { x: firstSideX, y: 8 + progress * 84 };
         }
 
         const secondSideSeats = count - firstSideSeats;
         const secondIndex = index - firstSideSeats;
         const progress =
           secondSideSeats === 1 ? 0.5 : secondIndex / (secondSideSeats - 1);
-        return { x: 24, y: 92 - progress * 84 };
+        return { x: secondSideX, y: 92 - progress * 84 };
+      }
+
+      function getTableSeatCount(tableGuests) {
+        return Math.max(...tableGuests.map((person) => Number(person.seat)));
       }
 
       function getSeatContext(guest) {
         const tableGuests = guests.filter(
           (person) => person.tableNumber === guest.tableNumber
         );
-        const index = tableGuests.indexOf(guest);
+        const seatNumber = Number(guest.seat);
+        const seatCount = getTableSeatCount(tableGuests);
         const layout = tableLayouts[guest.table];
         const neighbours = [];
         let positionLabel = "";
+        const guestAtSeat = (number) =>
+          tableGuests.find((person) => Number(person.seat) === number);
 
         if (layout.shape === "round") {
-          neighbours.push(
-            tableGuests[(index - 1 + tableGuests.length) % tableGuests.length],
-            tableGuests[(index + 1) % tableGuests.length]
-          );
+          const previousGuest = guestAtSeat(seatNumber === 1 ? seatCount : seatNumber - 1);
+          const nextGuest = guestAtSeat(seatNumber === seatCount ? 1 : seatNumber + 1);
+          if (previousGuest) neighbours.push(previousGuest);
+          if (nextGuest) neighbours.push(nextGuest);
 
-          const position = getSeatPosition(index, tableGuests.length, layout);
+          const position = getSeatPosition(seatNumber - 1, seatCount, layout);
           const vertical = position.y < 35 ? "top" : position.y > 65 ? "bottom" : "";
           const horizontal = position.x < 35 ? "left" : position.x > 65 ? "right" : "";
           positionLabel = `${[vertical, horizontal].filter(Boolean).join("-") || "middle"} of the round table`;
         } else {
           const firstSideSeats = layout.firstSideSeats;
-          const sideStart = index < firstSideSeats ? 0 : firstSideSeats;
-          const sideEnd = index < firstSideSeats
-            ? firstSideSeats - 1
-            : tableGuests.length - 1;
+          const firstSide = layout.firstSide || "right";
+          const secondSide = firstSide === "right" ? "left" : "right";
+          const sideStart = seatNumber <= firstSideSeats ? 1 : firstSideSeats + 1;
+          const sideEnd = seatNumber <= firstSideSeats ? firstSideSeats : seatCount;
+          const previousGuest = seatNumber > sideStart
+            ? guestAtSeat(seatNumber - 1)
+            : null;
+          const nextGuest = seatNumber < sideEnd
+            ? guestAtSeat(seatNumber + 1)
+            : null;
 
-          if (index > sideStart) neighbours.push(tableGuests[index - 1]);
-          if (index < sideEnd) neighbours.push(tableGuests[index + 1]);
-          positionLabel = `${index < firstSideSeats ? "right" : "left"} side of the table`;
+          if (previousGuest) neighbours.push(previousGuest);
+          if (nextGuest) neighbours.push(nextGuest);
+          positionLabel = `${seatNumber <= firstSideSeats ? firstSide : secondSide} side of the table`;
         }
 
         return { neighbours, positionLabel };
       }
 
       function formatNeighbourNames(neighbours) {
+        if (neighbours.length === 0) return "no occupied guest directly beside this seat";
         if (neighbours.length === 1) return neighbours[0].name;
         return `${neighbours[0].name} and ${neighbours[1].name}`;
       }
@@ -1477,16 +1504,20 @@
         let youMarker = "";
 
         if (isSelected) {
-          const selectedIndex = tableGuests.indexOf(guest);
+          const seatCount = getTableSeatCount(tableGuests);
+          const selectedIndex = Number(guest.seat) - 1;
           const { neighbours } = getSeatContext(guest);
-          markers = tableGuests
-            .map((person, index) => {
-              const position = getSeatPosition(index, tableGuests.length, layout);
-              const selected = index === selectedIndex ? " selected" : "";
+          markers = Array.from({ length: seatCount }, (_, seatIndex) => {
+              const person = tableGuests.find(
+                (tableGuest) => Number(tableGuest.seat) === seatIndex + 1
+              );
+              const position = getSeatPosition(seatIndex, seatCount, layout);
+              const selected = person === guest ? " selected" : "";
               const neighbour = neighbours.includes(person) ? " neighbour" : "";
+              const empty = person ? "" : " empty";
               return `
                 <span
-                  class="map-seat${selected}${neighbour}"
+                  class="map-seat${selected}${neighbour}${empty}"
                   style="left:${position.x}%; top:${position.y}%"
                   aria-hidden="true"
                 ></span>
@@ -1496,7 +1527,7 @@
 
           const selectedPosition = getSeatPosition(
             selectedIndex,
-            tableGuests.length,
+            seatCount,
             layout
           );
           youMarker = `
@@ -1533,11 +1564,18 @@
       function renderVenueMap(guest) {
         const { neighbours, positionLabel } = getSeatContext(guest);
         const neighbourNames = formatNeighbourNames(neighbours);
+        const tableGuests = guests.filter(
+          (person) => person.tableNumber === guest.tableNumber
+        );
+        const hasEmptyChair = getTableSeatCount(tableGuests) > tableGuests.length;
+        const neighbourDescription = neighbours.length
+          ? `Beside ${neighbourNames}.`
+          : "The adjacent chair is empty.";
         return `
           <div
             class="venue-map-viewport"
             role="img"
-            aria-label="Venue map centered on ${guest.table}. Seat ${guest.seat}, ${positionLabel}. Beside ${neighbourNames}."
+            aria-label="Venue map centered on ${guest.table}. Seat ${guest.seat}, ${positionLabel}. ${neighbourDescription}"
           >
             <div class="venue-map">
               ${venueTables.map((table) => renderVenueTable(table, guest)).join("")}
@@ -1545,7 +1583,8 @@
           </div>
           <p class="map-key">
             <span class="map-key-item"><span class="map-key-dot"></span>Your seat</span>
-            <span class="map-key-item"><span class="map-key-dot neighbour"></span>Beside you</span>
+            ${neighbours.length ? `<span class="map-key-item"><span class="map-key-dot neighbour"></span>Beside you</span>` : ""}
+            ${hasEmptyChair ? `<span class="map-key-item"><span class="map-key-dot empty"></span>Empty chair</span>` : ""}
           </p>
           <p class="map-help">Drag to explore the full venue</p>
         `;
@@ -1558,7 +1597,9 @@
             <p class="map-heading">Your exact position</p>
             <p class="seat-context">
               Seat ${guest.seat} · ${positionLabel}<br>
-              Beside <strong>${formatNeighbourNames(neighbours)}</strong>
+              ${neighbours.length
+                ? `Beside <strong>${formatNeighbourNames(neighbours)}</strong>`
+                : `<strong>The adjacent chair is empty</strong>`}
             </p>
             ${renderVenueMap(guest)}
           </div>
