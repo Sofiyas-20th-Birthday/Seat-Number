@@ -3,1149 +3,232 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="Find your seat at Sofia’s 20th birthday."
-    />
+    <meta name="description" content="Find your seat at Sofia’s 20th birthday." />
     <title>Sofia’s 20th Birthday · Find your seat</title>
     <style>
-      :root {
-        --paper: #f6f4ee;
-        --ink: #151510;
-        --muted: #74756d;
-        --line: #deddd5;
-        --accent: #f05a3c;
-        --accent-deep: #b93620;
-        --white: #ffffff;
-        --surface: rgba(255, 255, 255, 0.68);
-        --soft-shadow: 0 16px 45px rgba(38, 35, 27, 0.065);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-      }
-
-      body {
-        width: 100%;
-        max-width: 100%;
-        min-height: 100svh;
-        margin: 0;
-        overflow-x: hidden;
-        position: relative;
-        color: var(--ink);
-        background:
-          radial-gradient(
-            circle at 78% -8%,
-            rgba(193, 148, 46, 0.1),
-            transparent 31rem
-          ),
-          var(--paper);
-        font-family:
-          Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-      }
-
-      .shell {
-        width: 100%;
-        max-width: 480px;
-        min-width: 0;
-        min-height: 100svh;
-        margin: 0 auto;
-        padding: 0 22px 24px;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .topbar {
-        min-height: 66px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .event-name,
-      .event-date {
-        margin: 0;
-      }
-
-      .event-name {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 0.94rem;
-        font-weight: 400;
-        letter-spacing: -0.01em;
-      }
-
-      .birthday-trigger {
-        margin: 0 -2px;
-        padding: 3px 5px 4px;
-        border: 1px solid rgba(184, 137, 29, 0.2);
-        border-radius: 999px;
-        outline: none;
-        color: #b8891d;
-        background: rgba(184, 137, 29, 0.07);
-        cursor: pointer;
-        font: inherit;
-        font-weight: 400;
-      }
-
-      .birthday-trigger:focus-visible {
-        box-shadow: 0 0 0 3px rgba(184, 137, 29, 0.18);
-      }
-
-      .event-name::before {
-        color: var(--accent);
-        content: "✦";
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 0.78rem;
-        animation: birthday-sparkle 2.4s ease-in-out infinite;
-      }
-
-      .event-name::after {
-        position: absolute;
-        top: -8px;
-        right: -12px;
-        color: #c89125;
-        content: "✧";
-        font-size: 0.67rem;
-        animation: birthday-sparkle 2.4s 0.8s ease-in-out infinite;
-      }
-
-      .confetti-piece {
-        position: fixed;
-        top: var(--confetti-top);
-        left: var(--confetti-left);
-        z-index: 20;
-        width: 6px;
-        height: 9px;
-        border-radius: 2px;
-        opacity: 0;
-        pointer-events: none;
-        animation: confetti-drop 1.35s var(--confetti-delay) ease-out forwards;
-      }
-
-      .event-date {
-        color: var(--muted);
-        font-size: 0.67rem;
-        font-weight: 640;
-        letter-spacing: 0.11em;
-        text-transform: uppercase;
-      }
-
-      main {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        flex: 1;
-        display: block;
-        padding: 44px 0 32px;
-      }
-
-      .eyebrow {
-        margin: 0 0 12px;
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        color: var(--accent-deep);
-        font-size: 0.67rem;
-        font-weight: 750;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .eyebrow::before {
-        width: 18px;
-        height: 1px;
-        background: currentColor;
-        content: "";
-      }
-
-      .hero {
-        position: relative;
-        isolation: isolate;
-      }
-
-      .hero > *:not(.hero-bloom) {
-        position: relative;
-        z-index: 1;
-      }
-
-      .hero-bloom {
-        position: absolute;
-        top: 52px;
-        right: 5px;
-        width: 94px;
-        height: 94px;
-        opacity: 0.82;
-        pointer-events: none;
-        transform: rotate(-8deg);
-      }
-
-      .hero-bloom::before {
-        position: absolute;
-        inset: 2px;
-        border: 1px solid rgba(184, 137, 29, 0.18);
-        border-radius: 50%;
-        content: "";
-      }
-
-      .hero-bloom::after {
-        position: absolute;
-        top: -6px;
-        right: 3px;
-        color: #c89125;
-        content: "✦";
-        font-size: 0.68rem;
-      }
-
-      .bloom-petal {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 22px;
-        height: 35px;
-        margin: -35px 0 0 -11px;
-        border: 1.2px solid rgba(240, 90, 60, 0.58);
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.18);
-        transform-origin: 50% 35px;
-      }
-
-      .bloom-petal:nth-child(2) {
-        transform: rotate(72deg);
-      }
-
-      .bloom-petal:nth-child(3) {
-        transform: rotate(144deg);
-      }
-
-      .bloom-petal:nth-child(4) {
-        transform: rotate(216deg);
-      }
-
-      .bloom-petal:nth-child(5) {
-        transform: rotate(288deg);
-      }
-
-      .bloom-center {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 17px;
-        height: 17px;
-        border: 1px solid rgba(184, 137, 29, 0.72);
-        border-radius: 50%;
-        background: var(--paper);
-        transform: translate(-50%, -50%);
-      }
-
-      h1 {
-        margin: 0;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(3.35rem, 15.5vw, 4.5rem);
-        font-weight: 400;
-        letter-spacing: -0.055em;
-        line-height: 0.92;
-        text-wrap: balance;
-      }
-
-      h1 em {
-        color: var(--accent);
-        font-weight: 400;
-      }
-
-      .intro {
-        max-width: 330px;
-        margin: 19px 0 0;
-        color: var(--muted);
-        font-size: 0.96rem;
-        line-height: 1.5;
-      }
-
-      .finder {
-        position: relative;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        margin-top: 32px;
-      }
-
-      .search-area {
-        padding: 0 0 18px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 9px;
-        color: var(--muted);
-        font-size: 0.69rem;
-        font-weight: 760;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .input-wrap {
-        position: relative;
-      }
-
-      .search-symbol {
-        position: absolute;
-        top: 50%;
-        left: 18px;
-        z-index: 2;
-        width: 18px;
-        height: 18px;
-        border: 1.8px solid var(--ink);
-        border-radius: 50%;
-        transform: translateY(-58%);
-        pointer-events: none;
-      }
-
-      .search-symbol::after {
-        position: absolute;
-        right: -5px;
-        bottom: -3px;
-        width: 7px;
-        height: 1.8px;
-        border-radius: 2px;
-        background: var(--ink);
-        content: "";
-        transform: rotate(45deg);
-        transform-origin: left;
-      }
-
-      input {
-        width: 100%;
-        height: 60px;
-        padding: 0 48px 0 52px;
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        outline: none;
-        color: var(--ink);
-        background: rgba(255, 255, 255, 0.82);
-        font: inherit;
-        font-size: 16px;
-        transition:
-          border-color 160ms ease,
-          box-shadow 160ms ease;
-      }
-
-      input::placeholder {
-        color: #a4a49a;
-      }
-
-      input::-webkit-search-cancel-button,
-      input::-webkit-search-decoration {
-        margin: 0;
-        display: none;
-        -webkit-appearance: none;
-        appearance: none;
-      }
-
-      input:focus {
-        border-color: rgba(185, 54, 32, 0.65);
-        box-shadow: 0 0 0 3px rgba(240, 90, 60, 0.09);
-      }
-
-      .clear-button {
-        position: absolute;
-        top: 50%;
-        right: 11px;
-        z-index: 2;
-        width: 38px;
-        height: 38px;
-        padding: 0;
-        display: none;
-        place-items: center;
-        border: 0;
-        border-radius: 50%;
-        color: var(--muted);
-        background: transparent;
-        cursor: pointer;
-        font-size: 1.35rem;
-        line-height: 1;
-        transform: translateY(-50%);
-      }
-
-      .clear-button:hover {
-        color: var(--ink);
-        background: rgba(29, 33, 28, 0.06);
-      }
-
-      .clear-button.visible {
-        display: grid;
-      }
-
-      .results {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        min-height: 190px;
-        padding: 0;
-        border-top: 0;
-      }
-
-      .prompt-state,
-      .empty-state {
-        min-height: 188px;
-        padding: 24px 18px;
-        display: grid;
-        place-content: center;
-        border-top: 1px solid var(--line);
-        text-align: center;
-      }
-
-      .prompt-mark {
-        width: 29px;
-        height: 29px;
-        margin: 0 auto 13px;
-        display: grid;
-        place-items: center;
-        border: 1px solid rgba(240, 90, 60, 0.22);
-        border-radius: 50%;
-        color: var(--accent);
-        background: rgba(255, 255, 255, 0.44);
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 0.72rem;
-      }
-
-      .state-title {
-        margin: 0 0 7px;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 1.28rem;
-        font-weight: 400;
-      }
-
-      .state-copy {
-        max-width: 260px;
-        margin: 0 auto;
-        color: var(--muted);
-        font-size: 0.88rem;
-        line-height: 1.55;
-      }
-
-      .match-list {
-        margin: 0;
-        padding: 0;
-        display: grid;
-        gap: 8px;
-        list-style: none;
-      }
-
-      .match {
-        width: 100%;
-        min-height: 84px;
-        padding: 14px;
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        align-items: center;
-        gap: 16px;
-        border: 1px solid var(--line);
-        border-radius: 17px;
-        color: inherit;
-        background: rgba(255, 255, 255, 0.42);
-        text-align: left;
-        cursor: pointer;
-        transition:
-          border-color 150ms ease,
-          background 150ms ease,
-          transform 150ms ease;
-      }
-
-      .match:hover,
-      .match:focus-visible {
-        outline: none;
-        border-color: rgba(185, 54, 32, 0.26);
-        background: rgba(255, 255, 255, 0.82);
-        transform: translateY(-1px);
-      }
-
-      .match.best {
-        border-color: rgba(240, 90, 60, 0.2);
-        background: rgba(255, 255, 255, 0.7);
-        box-shadow: 0 10px 30px rgba(38, 35, 27, 0.045);
-      }
-
-      .match-name {
-        display: block;
-        overflow: hidden;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 1.18rem;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .match-name mark {
-        color: var(--accent-deep);
-        background: transparent;
-      }
-
-      .match-detail {
-        margin-top: 6px;
-        display: flex;
-        align-items: baseline;
-        gap: 5px;
-        color: var(--muted);
-        font-size: 0.68rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-      }
-
-      .match-detail .flower-name {
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 1.08rem;
-        font-weight: 600;
-        letter-spacing: -0.015em;
-        line-height: 1;
-        text-transform: none;
-      }
-
-      .flower-name {
-        color: var(--flower-color, var(--ink));
-        font-weight: 780;
-      }
-
-      .match-arrow {
-        width: 36px;
-        height: 36px;
-        display: grid;
-        place-items: center;
-        border: 1px solid rgba(240, 90, 60, 0.2);
-        border-radius: 50%;
-        background: var(--white);
-        color: var(--accent-deep);
-        font-size: 1rem;
-      }
-
-      .confirmation {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        min-height: 280px;
-        padding: 22px 0;
-        display: grid;
-        place-items: center;
-        text-align: center;
-        animation: appear 260ms ease both;
-      }
-
-      .confirmation > div {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-      }
-
-      .confirmed-label {
-        margin: 0 0 7px;
-        color: var(--muted);
-        font-size: 0.63rem;
-        font-weight: 780;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-
-      .confirmed-name {
-        margin: 0;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 1.45rem;
-        font-weight: 400;
-        letter-spacing: -0.025em;
-        overflow-wrap: anywhere;
-      }
-
-      .table-reveal {
-        margin-top: 18px;
-        padding: 21px 14px 19px;
-        border: 1px solid color-mix(in srgb, var(--flower-color) 28%, var(--line));
-        border-radius: 22px;
-        background:
-          linear-gradient(
-            145deg,
-            color-mix(in srgb, var(--flower-color) 7%, var(--white)),
-            rgba(255, 255, 255, 0.64)
-          );
-        box-shadow: var(--soft-shadow);
-      }
-
-      .table-kicker {
-        margin: 0 0 8px;
-        color: var(--muted);
-        font-size: 0.62rem;
-        font-weight: 780;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-      }
-
-      .table-assignment {
-        margin: 0;
-        display: block;
-      }
-
-      .table-assignment .flower-name {
-        color: var(--flower-color);
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(2.35rem, 11vw, 3.1rem);
-        font-weight: 400;
-        line-height: 0.95;
-        letter-spacing: -0.045em;
-        overflow-wrap: anywhere;
-      }
-
-      .table-reveal::after {
-        display: block;
-        width: 30px;
-        height: 2px;
-        margin: 13px auto 0;
-        border-radius: 99px;
-        background: var(--flower-color);
-        content: "";
-      }
-
-      .map-wrap {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        margin-top: 29px;
-        padding-top: 0;
-        border-top: 0;
-      }
-
-      .map-heading {
-        margin: 0;
-        font-size: 0.68rem;
-        font-weight: 760;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
-      }
-
-      .map-heading::after {
-        display: block;
-        width: 22px;
-        height: 1px;
-        margin: 9px auto 0;
-        background: var(--line);
-        content: "";
-      }
-
-      .seat-context {
-        margin: 11px auto 0;
-        color: var(--muted);
-        font-size: 0.78rem;
-        line-height: 1.45;
-      }
-
-      .seat-context strong {
-        color: var(--ink);
-        font-weight: 720;
-      }
-
-      .venue-map-viewport {
-        position: relative;
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        height: 360px;
-        margin: 16px auto 0;
-        overflow: scroll;
-        contain: layout paint;
-        border: 1px solid var(--line);
-        border-radius: 24px;
-        background:
-          linear-gradient(rgba(18, 19, 16, 0.025) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(18, 19, 16, 0.025) 1px, transparent 1px),
-          rgba(255, 255, 255, 0.56);
-        background-size: 32px 32px;
-        box-shadow:
-          inset 0 0 0 1px rgba(255, 255, 255, 0.55),
-          0 14px 38px rgba(38, 35, 27, 0.055);
-        cursor: grab;
-        scrollbar-width: none;
-        overscroll-behavior: contain;
-        touch-action: pan-x pan-y;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      .venue-map-viewport::-webkit-scrollbar {
-        display: none;
-      }
-
-      .venue-map {
-        position: relative;
-        width: 900px;
-        min-width: 900px;
-        max-width: none;
-        height: 760px;
-      }
-
-      .venue-table {
-        position: absolute;
-        z-index: 1;
-        width: var(--table-width, 104px);
-        height: var(--table-height, 104px);
-        display: grid;
-        place-items: center;
-        color: var(--muted);
-        transform: translate(-50%, -50%);
-        transition:
-          width 220ms ease,
-          height 220ms ease,
-          color 220ms ease;
-      }
-
-      .venue-table.is-selected {
-        z-index: 2;
-        width: var(--focus-width, 230px);
-        height: var(--focus-height, 230px);
-        color: var(--ink);
-      }
-
-      .venue-table-core {
-        position: absolute;
-        inset: 12%;
-        display: grid;
-        place-content: center;
-        border: 1px solid #c7c9c1;
-        border-radius: 14px;
-        background: rgba(247, 246, 242, 0.96);
-        text-align: center;
-      }
-
-      .venue-table.round .venue-table-core {
-        border-radius: 50%;
-      }
-
-      .venue-table.is-selected .venue-table-core {
-        inset: 20%;
-        border-color: var(--flower-color, var(--accent));
-        background: var(--white);
-        box-shadow: 0 18px 42px rgba(42, 39, 31, 0.1);
-      }
-
-      .venue-table.is-selected.rectangle .venue-table-core {
-        inset: 7% 20%;
-      }
-
-      .venue-table-core span {
-        max-width: 86px;
-        overflow: hidden;
-        color: var(--flower-color, var(--ink));
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 0.85rem;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .venue-table.is-selected .venue-table-core span {
-        max-width: 120px;
-        font-size: 1.25rem;
-        letter-spacing: -0.025em;
-      }
-
-      .map-seat {
-        position: absolute;
-        z-index: 3;
-        width: 13px;
-        height: 13px;
-        display: grid;
-        place-items: center;
-        border: 1px solid #c7c9c1;
-        border-radius: 50%;
-        background: var(--paper);
-        transform: translate(-50%, -50%);
-      }
-
-      .venue-table.dense .map-seat {
-        width: 10px;
-        height: 10px;
-      }
-
-      .map-seat.selected {
-        width: 24px;
-        height: 24px;
-        border-color: var(--accent);
-        background: var(--accent);
-        box-shadow: 0 0 0 6px rgba(240, 90, 60, 0.14);
-      }
-
-      .map-seat.neighbour {
-        width: 17px;
-        height: 17px;
-        border-color: #b8891d;
-        background: #f6dfaa;
-        box-shadow: 0 0 0 4px rgba(184, 137, 29, 0.1);
-      }
-
-      .map-seat.empty {
-        border-style: dashed;
-        background: transparent;
-        opacity: 0.62;
-      }
-
-      .map-you {
-        position: absolute;
-        z-index: 4;
-        padding: 4px 7px;
-        border-radius: 999px;
-        color: var(--white);
-        background: var(--ink);
-        font-size: 0.53rem;
-        font-weight: 760;
-        letter-spacing: 0.07em;
-        pointer-events: none;
-        text-transform: uppercase;
-        transform: translate(-50%, -38px);
-      }
-
-      .map-key {
-        margin: 12px 0 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        color: var(--muted);
-        font-size: 0.73rem;
-      }
-
-      .map-key-item {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .map-key-dot {
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: var(--accent);
-        content: "";
-      }
-
-      .map-key-dot.neighbour {
-        border: 1px solid #b8891d;
-        background: #f6dfaa;
-      }
-
-      .map-key-dot.empty {
-        border: 1px dashed #9b9d94;
-        background: transparent;
-      }
-
-      .map-help {
-        margin: 6px 0 0;
-        color: var(--muted);
-        font-size: 0.68rem;
-      }
-
-      .back-button {
-        width: 100%;
-        margin-top: 20px;
-        min-height: 48px;
-        padding: 11px 16px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        color: var(--ink);
-        background: rgba(255, 255, 255, 0.48);
-        cursor: pointer;
-        font: inherit;
-        font-size: 0.78rem;
-        font-weight: 700;
-      }
-
-      .back-button:hover {
-        background: var(--white);
-      }
-
-      .shell.result-mode main {
-        padding-top: 20px;
-      }
-
-      .shell.result-mode main > section:first-child,
-      .shell.result-mode .search-area {
-        display: none;
-      }
-
-      .shell.result-mode .finder {
-        margin-top: 0;
-      }
-
-      .shell.result-mode .results {
-        border-top: 0;
-      }
-
-      .shell.result-mode .confirmation {
-        padding-top: 4px;
-      }
-
-      .shell.result-mode footer {
-        display: none;
-      }
-
-      footer {
-        padding-top: 15px;
-        display: block;
-        border-top: 1px solid var(--line);
-        color: var(--muted);
-        font-size: 0.7rem;
-        letter-spacing: 0.04em;
-        text-align: center;
-      }
-
-      @keyframes appear {
-        from {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-      }
-
-      @keyframes birthday-sparkle {
-        0%,
-        100% {
-          opacity: 0.45;
-          transform: scale(0.8) rotate(-8deg);
-        }
-        50% {
-          opacity: 1;
-          transform: scale(1.12) rotate(8deg);
-        }
-      }
-
-      @keyframes confetti-drop {
-        0% {
-          opacity: 0;
-          transform: translate(0, -4px) rotate(0deg);
-        }
-        12% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0;
-          transform:
-            translate(var(--confetti-drift), var(--confetti-fall))
-            rotate(var(--confetti-spin));
-        }
-      }
-
-      @media (max-width: 380px) {
-        .shell {
-          padding: 0 16px 20px;
-        }
-
-        .topbar {
-          gap: 10px;
-        }
-
-        .event-name {
-          font-size: 0.76rem;
-        }
-
-        .event-date {
-          font-size: 0.58rem;
-        }
-
-        main {
-          padding-top: 36px;
-        }
-
-        h1 {
-          font-size: 3.35rem;
-        }
-
-        .hero-bloom {
-          top: 55px;
-          right: -2px;
-          width: 78px;
-          height: 78px;
-          opacity: 0.72;
-        }
-
-        .bloom-petal {
-          width: 18px;
-          height: 29px;
-          margin: -29px 0 0 -9px;
-          transform-origin: 50% 29px;
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          scroll-behavior: auto !important;
-          animation-duration: 0.01ms !important;
-          transition-duration: 0.01ms !important;
-        }
-      }
+      :root { --paper:#f6f4ee; --ink:#151510; --muted:#74756d; --line:#deddd5; --accent:#f05a3c; --accent-deep:#b93620; --white:#fff; --surface:rgba(255,255,255,.68); --soft-shadow:0 16px 45px rgba(38,35,27,.065); }
+      * { box-sizing:border-box; }
+      html { width:100%; max-width:100%; overflow-x:hidden; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+      body { width:100%; max-width:100%; min-height:100svh; margin:0; overflow-x:hidden; position:relative; color:var(--ink); background:radial-gradient(circle at 78% -8%,rgba(193,148,46,.1),transparent 31rem),var(--paper); font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .shell { width:100%; max-width:480px; min-width:0; min-height:100svh; margin:0 auto; padding:0 22px 24px; display:flex; flex-direction:column; }
+      .topbar { min-height:66px; display:flex; align-items:center; justify-content:space-between; gap:16px; border-bottom:1px solid var(--line); }
+      .event-name,.event-date { margin:0; }
+      .event-name { position:relative; display:inline-flex; align-items:center; gap:6px; white-space:nowrap; font-family:Georgia,"Times New Roman",serif; font-size:.94rem; font-weight:400; letter-spacing:-.01em; }
+      .birthday-trigger { margin:0 -2px; padding:3px 5px 4px; border:1px solid rgba(184,137,29,.2); border-radius:999px; outline:none; color:#b8891d; background:rgba(184,137,29,.07); cursor:pointer; font:inherit; font-weight:400; }
+      .birthday-trigger:focus-visible { box-shadow:0 0 0 3px rgba(184,137,29,.18); }
+      .event-name::before { color:var(--accent); content:"✦"; font-family:Georgia,"Times New Roman",serif; font-size:.78rem; animation:birthday-sparkle 2.4s ease-in-out infinite; }
+      .event-name::after { position:absolute; top:-8px; right:-12px; color:#c89125; content:"✧"; font-size:.67rem; animation:birthday-sparkle 2.4s .8s ease-in-out infinite; }
+      .confetti-piece { position:fixed; top:var(--confetti-top); left:var(--confetti-left); z-index:20; width:6px; height:9px; border-radius:2px; opacity:0; pointer-events:none; animation:confetti-drop 1.35s var(--confetti-delay) ease-out forwards; }
+      .event-date { color:var(--muted); font-size:.67rem; font-weight:640; letter-spacing:.11em; text-transform:uppercase; }
+      main { width:100%; max-width:100%; min-width:0; flex:1; display:block; padding:44px 0 32px; }
+      .eyebrow { margin:0 0 12px; display:flex; align-items:center; gap:9px; color:var(--accent-deep); font-size:.67rem; font-weight:750; letter-spacing:.12em; text-transform:uppercase; }
+      .eyebrow::before { width:18px; height:1px; background:currentColor; content:""; }
+      .hero { position:relative; isolation:isolate; }
+      .hero > *:not(.hero-bloom) { position:relative; z-index:1; }
+      .hero-bloom { position:absolute; top:52px; right:5px; width:94px; height:94px; opacity:.82; pointer-events:none; transform:rotate(-8deg); }
+      .hero-bloom::before { position:absolute; inset:2px; border:1px solid rgba(184,137,29,.18); border-radius:50%; content:""; }
+      .hero-bloom::after { position:absolute; top:-6px; right:3px; color:#c89125; content:"✦"; font-size:.68rem; }
+      .bloom-petal { position:absolute; top:50%; left:50%; width:22px; height:35px; margin:-35px 0 0 -11px; border:1.2px solid rgba(240,90,60,.58); border-radius:50%; background:rgba(255,255,255,.18); transform-origin:50% 35px; }
+      .bloom-petal:nth-child(2) { transform:rotate(72deg); } .bloom-petal:nth-child(3) { transform:rotate(144deg); } .bloom-petal:nth-child(4) { transform:rotate(216deg); } .bloom-petal:nth-child(5) { transform:rotate(288deg); }
+      .bloom-center { position:absolute; top:50%; left:50%; width:17px; height:17px; border:1px solid rgba(184,137,29,.72); border-radius:50%; background:var(--paper); transform:translate(-50%,-50%); }
+      h1 { margin:0; font-family:Georgia,"Times New Roman",serif; font-size:clamp(3.35rem,15.5vw,4.5rem); font-weight:400; letter-spacing:-.055em; line-height:.92; text-wrap:balance; }
+      h1 em { color:var(--accent); font-weight:400; }
+      .intro { max-width:330px; margin:19px 0 0; color:var(--muted); font-size:.96rem; line-height:1.5; }
+      .finder { position:relative; width:100%; max-width:100%; min-width:0; margin-top:32px; }
+      .search-area { padding:0 0 18px; }
+      label { display:block; margin-bottom:9px; color:var(--muted); font-size:.69rem; font-weight:760; letter-spacing:.12em; text-transform:uppercase; }
+      .input-wrap { position:relative; }
+      .search-symbol { position:absolute; top:50%; left:18px; z-index:2; width:18px; height:18px; border:1.8px solid var(--ink); border-radius:50%; transform:translateY(-58%); pointer-events:none; }
+      .search-symbol::after { position:absolute; right:-5px; bottom:-3px; width:7px; height:1.8px; border-radius:2px; background:var(--ink); content:""; transform:rotate(45deg); transform-origin:left; }
+      input { width:100%; height:60px; padding:0 48px 0 52px; border:1px solid var(--line); border-radius:18px; outline:none; color:var(--ink); background:rgba(255,255,255,.82); font:inherit; font-size:16px; transition:border-color 160ms ease,box-shadow 160ms ease; }
+      input::placeholder { color:#a4a49a; }
+      input::-webkit-search-cancel-button,input::-webkit-search-decoration { margin:0; display:none; -webkit-appearance:none; appearance:none; }
+      input:focus { border-color:rgba(185,54,32,.65); box-shadow:0 0 0 3px rgba(240,90,60,.09); }
+      .clear-button { position:absolute; top:50%; right:11px; z-index:2; width:38px; height:38px; padding:0; display:none; place-items:center; border:0; border-radius:50%; color:var(--muted); background:transparent; cursor:pointer; font-size:1.35rem; line-height:1; transform:translateY(-50%); }
+      .clear-button:hover { color:var(--ink); background:rgba(29,33,28,.06); } .clear-button.visible { display:grid; }
+      .results { width:100%; max-width:100%; min-width:0; min-height:190px; padding:0; border-top:0; }
+      .prompt-state,.empty-state { min-height:188px; padding:24px 18px; display:grid; place-content:center; border-top:1px solid var(--line); text-align:center; }
+      .prompt-mark { width:29px; height:29px; margin:0 auto 13px; display:grid; place-items:center; border:1px solid rgba(240,90,60,.22); border-radius:50%; color:var(--accent); background:rgba(255,255,255,.44); font-family:Georgia,"Times New Roman",serif; font-size:.72rem; }
+      .state-title { margin:0 0 7px; font-family:Georgia,"Times New Roman",serif; font-size:1.28rem; font-weight:400; }
+      .state-copy { max-width:260px; margin:0 auto; color:var(--muted); font-size:.88rem; line-height:1.55; }
+      .match-list { margin:0; padding:0; display:grid; gap:8px; list-style:none; }
+      .match { width:100%; min-height:84px; padding:14px; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:16px; border:1px solid var(--line); border-radius:17px; color:inherit; background:rgba(255,255,255,.42); text-align:left; cursor:pointer; transition:border-color 150ms ease,background 150ms ease,transform 150ms ease; }
+      .match:hover,.match:focus-visible { outline:none; border-color:rgba(185,54,32,.26); background:rgba(255,255,255,.82); transform:translateY(-1px); }
+      .match.best { border-color:rgba(240,90,60,.2); background:rgba(255,255,255,.7); box-shadow:0 10px 30px rgba(38,35,27,.045); }
+      .match-name { display:block; overflow:hidden; font-family:Georgia,"Times New Roman",serif; font-size:1.18rem; text-overflow:ellipsis; white-space:nowrap; }
+      .match-name mark { color:var(--accent-deep); background:transparent; }
+      .match-detail { margin-top:6px; display:flex; align-items:baseline; gap:5px; color:var(--muted); font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+      .match-detail .flower-name { font-family:Georgia,"Times New Roman",serif; font-size:1.08rem; font-weight:600; letter-spacing:-.015em; line-height:1; text-transform:none; }
+      .flower-name { color:var(--flower-color,var(--ink)); font-weight:780; }
+      .match-arrow { width:36px; height:36px; display:grid; place-items:center; border:1px solid rgba(240,90,60,.2); border-radius:50%; background:var(--white); color:var(--accent-deep); font-size:1rem; }
+      .confirmation { width:100%; max-width:100%; min-width:0; min-height:280px; padding:22px 0; display:grid; place-items:center; text-align:center; animation:appear 260ms ease both; }
+      .confirmation > div { width:100%; max-width:100%; min-width:0; }
+      .confirmed-label { margin:0 0 7px; color:var(--muted); font-size:.63rem; font-weight:780; letter-spacing:.14em; text-transform:uppercase; }
+      .confirmed-name { margin:0; font-family:Georgia,"Times New Roman",serif; font-size:1.45rem; font-weight:400; letter-spacing:-.025em; overflow-wrap:anywhere; }
+      .table-reveal { margin-top:18px; padding:21px 14px 19px; border:1px solid color-mix(in srgb,var(--flower-color) 28%,var(--line)); border-radius:22px; background:linear-gradient(145deg,color-mix(in srgb,var(--flower-color) 7%,var(--white)),rgba(255,255,255,.64)); box-shadow:var(--soft-shadow); }
+      .table-kicker { margin:0 0 8px; color:var(--muted); font-size:.62rem; font-weight:780; letter-spacing:.16em; text-transform:uppercase; }
+      .table-assignment { margin:0; display:block; }
+      .table-assignment .flower-name { color:var(--flower-color); font-family:Georgia,"Times New Roman",serif; font-size:clamp(2.35rem,11vw,3.1rem); font-weight:400; line-height:.95; letter-spacing:-.045em; overflow-wrap:anywhere; }
+      .table-reveal::after { display:block; width:30px; height:2px; margin:13px auto 0; border-radius:99px; background:var(--flower-color); content:""; }
+      .map-wrap { width:100%; max-width:100%; min-width:0; margin-top:29px; padding-top:0; border-top:0; }
+      .map-heading { margin:0; font-size:.68rem; font-weight:760; letter-spacing:.13em; text-transform:uppercase; }
+      .map-heading::after { display:block; width:22px; height:1px; margin:9px auto 0; background:var(--line); content:""; }
+      .seat-context { margin:11px auto 0; color:var(--muted); font-size:.78rem; line-height:1.45; } .seat-context strong { color:var(--ink); font-weight:720; }
+      .venue-map-viewport { position:relative; display:block; width:100%; max-width:100%; min-width:0; height:360px; margin:16px auto 0; overflow:scroll; contain:layout paint; border:1px solid var(--line); border-radius:24px; background:linear-gradient(rgba(18,19,16,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(18,19,16,.025) 1px,transparent 1px),rgba(255,255,255,.56); background-size:32px 32px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.55),0 14px 38px rgba(38,35,27,.055); cursor:grab; scrollbar-width:none; overscroll-behavior:contain; touch-action:pan-x pan-y; -webkit-overflow-scrolling:touch; }
+      .venue-map-viewport::-webkit-scrollbar { display:none; }
+      .venue-map { position:relative; width:900px; min-width:900px; max-width:none; height:760px; }
+      .venue-table { position:absolute; z-index:1; width:var(--table-width,104px); height:var(--table-height,104px); display:grid; place-items:center; color:var(--muted); transform:translate(-50%,-50%); transition:width 220ms ease,height 220ms ease,color 220ms ease; }
+      .venue-table.is-selected { z-index:2; width:var(--focus-width,230px); height:var(--focus-height,230px); color:var(--ink); }
+      .venue-table-core { position:absolute; inset:12%; display:grid; place-content:center; border:1px solid #c7c9c1; border-radius:14px; background:rgba(247,246,242,.96); text-align:center; }
+      .venue-table.round .venue-table-core { border-radius:50%; }
+      .venue-table.is-selected .venue-table-core { inset:20%; border-color:var(--flower-color,var(--accent)); background:var(--white); box-shadow:0 18px 42px rgba(42,39,31,.1); }
+      .venue-table.is-selected.rectangle .venue-table-core { inset:7% 20%; }
+      .venue-table-core span { max-width:86px; overflow:hidden; color:var(--flower-color,var(--ink)); font-family:Georgia,"Times New Roman",serif; font-size:.85rem; text-overflow:ellipsis; white-space:nowrap; }
+      .venue-table.is-selected .venue-table-core span { max-width:120px; font-size:1.25rem; letter-spacing:-.025em; }
+      .map-seat { position:absolute; z-index:3; width:13px; height:13px; display:grid; place-items:center; border:1px solid #c7c9c1; border-radius:50%; background:var(--paper); transform:translate(-50%,-50%); }
+      .venue-table.dense .map-seat { width:10px; height:10px; }
+      .map-seat.selected { width:24px; height:24px; border-color:var(--accent); background:var(--accent); box-shadow:0 0 0 6px rgba(240,90,60,.14); }
+      .map-seat.neighbour { width:17px; height:17px; border-color:#b8891d; background:#f6dfaa; box-shadow:0 0 0 4px rgba(184,137,29,.1); }
+      .map-seat.empty { border-style:dashed; background:transparent; opacity:.62; }
+      .map-you { position:absolute; z-index:4; padding:4px 7px; border-radius:999px; color:var(--white); background:var(--ink); font-size:.53rem; font-weight:760; letter-spacing:.07em; pointer-events:none; text-transform:uppercase; transform:translate(-50%,-38px); }
+      .map-key { margin:12px 0 0; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--muted); font-size:.73rem; }
+      .map-key-item { display:inline-flex; align-items:center; gap:6px; }
+      .map-key-dot { width:9px; height:9px; border-radius:50%; background:var(--accent); content:""; }
+      .map-key-dot.neighbour { border:1px solid #b8891d; background:#f6dfaa; }
+      .map-key-dot.empty { border:1px dashed #9b9d94; background:transparent; }
+      .map-help { margin:6px 0 0; color:var(--muted); font-size:.68rem; }
+      .back-button { width:100%; margin-top:20px; min-height:48px; padding:11px 16px; border:1px solid var(--line); border-radius:999px; color:var(--ink); background:rgba(255,255,255,.48); cursor:pointer; font:inherit; font-size:.78rem; font-weight:700; }
+      .back-button:hover { background:var(--white); }
+      .shell.result-mode main { padding-top:20px; }
+      .shell.result-mode main > section:first-child,.shell.result-mode .search-area { display:none; }
+      .shell.result-mode .finder { margin-top:0; } .shell.result-mode .results { border-top:0; } .shell.result-mode .confirmation { padding-top:4px; } .shell.result-mode footer { display:none; }
+      footer { padding-top:15px; display:block; border-top:1px solid var(--line); color:var(--muted); font-size:.7rem; letter-spacing:.04em; text-align:center; }
+      @keyframes appear { from { opacity:0; transform:translateY(6px); } }
+      @keyframes birthday-sparkle { 0%,100% { opacity:.45; transform:scale(.8) rotate(-8deg); } 50% { opacity:1; transform:scale(1.12) rotate(8deg); } }
+      @keyframes confetti-drop { 0% { opacity:0; transform:translate(0,-4px) rotate(0deg); } 12% { opacity:1; } 100% { opacity:0; transform:translate(var(--confetti-drift),var(--confetti-fall)) rotate(var(--confetti-spin)); } }
+      @media (max-width:380px) { .shell { padding:0 16px 20px; } .topbar { gap:10px; } .event-name { font-size:.76rem; } .event-date { font-size:.58rem; } main { padding-top:36px; } h1 { font-size:3.35rem; } .hero-bloom { top:55px; right:-2px; width:78px; height:78px; opacity:.72; } .bloom-petal { width:18px; height:29px; margin:-29px 0 0 -9px; transform-origin:50% 29px; } }
+      @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; animation-duration:.01ms !important; transition-duration:.01ms !important; } }
     </style>
   </head>
   <body>
     <div class="shell">
       <header class="topbar">
-        <p class="event-name">
-          Sofia’s
-          <button
-            class="birthday-trigger"
-            type="button"
-            aria-label="Celebrate Sofia’s 20th birthday"
-          >20th</button>
-          Birthday
-        </p>
+        <p class="event-name">Sofia’s <button class="birthday-trigger" type="button" aria-label="Celebrate Sofia’s 20th birthday">20th</button> Birthday</p>
         <p class="event-date">4 August</p>
       </header>
-
       <main>
         <section class="hero" aria-labelledby="page-title">
           <p class="eyebrow">Welcome</p>
           <h1 id="page-title">Find your <em>seat.</em></h1>
           <p class="intro">Type your name to see where you’re sitting.</p>
-          <div class="hero-bloom" aria-hidden="true">
-            <span class="bloom-petal"></span>
-            <span class="bloom-petal"></span>
-            <span class="bloom-petal"></span>
-            <span class="bloom-petal"></span>
-            <span class="bloom-petal"></span>
-            <span class="bloom-center"></span>
-          </div>
+          <div class="hero-bloom" aria-hidden="true"><span class="bloom-petal"></span><span class="bloom-petal"></span><span class="bloom-petal"></span><span class="bloom-petal"></span><span class="bloom-petal"></span><span class="bloom-center"></span></div>
         </section>
-
         <section class="finder" aria-label="Guest seat finder">
           <div class="search-area">
             <label for="guest-search">Your name</label>
-            <div class="input-wrap">
-              <span class="search-symbol" aria-hidden="true"></span>
-              <input
-                id="guest-search"
-                type="search"
-                inputmode="search"
-                placeholder="Start typing your name…"
-                autocomplete="off"
-                spellcheck="false"
-                aria-controls="results"
-              />
-              <button class="clear-button" type="button" aria-label="Clear search">×</button>
-            </div>
+            <div class="input-wrap"><span class="search-symbol" aria-hidden="true"></span><input id="guest-search" type="search" inputmode="search" placeholder="Start typing your name…" autocomplete="off" spellcheck="false" aria-controls="results" /><button class="clear-button" type="button" aria-label="Clear search">×</button></div>
           </div>
           <div id="results" class="results" aria-live="polite"></div>
         </section>
       </main>
-
-      <footer>
-        <span>Need help? Ask a member of the welcome team.</span>
-      </footer>
+      <footer><span>Need help? Ask a member of the welcome team.</span></footer>
     </div>
-
     <script>
-      // Seats follow the photographed plans: round tables start at the bottom and
-      // continue through the right-hand arc; rectangular tables start at the top
-      // of the right side and return from bottom to top along the left side.
       const guests = [
-        { name: "Sholpan Krymova", seat: "01", table: "Oncidium", tableNumber: "1" },
-        { name: "Umut Shayakhmetova", seat: "02", table: "Oncidium", tableNumber: "1" },
-        { name: "Anastasia Bukhman", seat: "03", table: "Oncidium", tableNumber: "1" },
-        { name: "Alina Suleimenova", seat: "04", table: "Oncidium", tableNumber: "1" },
-        { name: "H.S.H. Princess Tilsim von Liechtenstein", seat: "05", table: "Oncidium", tableNumber: "1" },
-        { name: "Timur Kulibayev", seat: "06", table: "Oncidium", tableNumber: "1" },
-        { name: "Dinara Kulibayeva", seat: "07", table: "Oncidium", tableNumber: "1" },
-        { name: "Gregory Jankilevitsch", seat: "08", table: "Oncidium", tableNumber: "1" },
-        { name: "Igor Bukhman", seat: "09", table: "Oncidium", tableNumber: "1" },
-        { name: "Rebecca Conwell", seat: "10", table: "Oncidium", tableNumber: "1" },
-        { name: "Beimbet Shayakhmetov", seat: "11", table: "Oncidium", tableNumber: "1" },
-        { name: "Dinara Salimova", seat: "12", table: "Oncidium", tableNumber: "1" },
-        { name: "Ershat Salimov", seat: "13", table: "Oncidium", tableNumber: "1" },
-        { name: "Rustam Aksenenko", seat: "14", table: "Oncidium", tableNumber: "1" },
-        { name: "Ayman Sarsenova", seat: "15", table: "Oncidium", tableNumber: "1" },
-        { name: "Dias Suleimenov", seat: "16", table: "Oncidium", tableNumber: "1" },
-        { name: "Rachid Rizk", seat: "17", table: "Oncidium", tableNumber: "1" },
-        { name: "Jambulat Sarsenov", seat: "18", table: "Oncidium", tableNumber: "1" },
-        { name: "Caroline Scheufele", seat: "19", table: "Oncidium", tableNumber: "1" },
-        { name: "Kairat Krymov", seat: "20", table: "Oncidium", tableNumber: "1" },
-        { name: "Chahrazad Rizk", seat: "21", table: "Oncidium", tableNumber: "1" },
-        { name: "Svetlana Aksenenko", seat: "22", table: "Oncidium", tableNumber: "1" },
-        { name: "Daniyar Abulgazin", seat: "23", table: "Oncidium", tableNumber: "1" },
-        { name: "Aidana Suleimenova", seat: "24", table: "Oncidium", tableNumber: "1" },
-        { name: "Askar Izbassarov", seat: "25", table: "Oncidium", tableNumber: "1" },
-        { name: "Zaure Izbassarova", seat: "26", table: "Oncidium", tableNumber: "1" },
+        { name:"Sholpan Krymova", seat:"01", table:"Oncidium", tableNumber:"1" },
+        { name:"Umut Shayakhmetova", seat:"02", table:"Oncidium", tableNumber:"1" },
+        { name:"Anastasia Bukhman", seat:"03", table:"Oncidium", tableNumber:"1" },
+        { name:"Alina Suleimenova", seat:"04", table:"Oncidium", tableNumber:"1" },
+        { name:"H.S.H. Princess Tilsim von Liechtenstein", seat:"05", table:"Oncidium", tableNumber:"1" },
+        { name:"Timur Kulibayev", seat:"06", table:"Oncidium", tableNumber:"1" },
+        { name:"Dinara Kulibayeva", seat:"07", table:"Oncidium", tableNumber:"1" },
+        { name:"Gregory Jankilevitsch", seat:"08", table:"Oncidium", tableNumber:"1" },
+        { name:"Igor Bukhman", seat:"09", table:"Oncidium", tableNumber:"1" },
+        { name:"Rebecca Conwell", seat:"10", table:"Oncidium", tableNumber:"1" },
+        { name:"Beimbet Shayakhmetov", seat:"11", table:"Oncidium", tableNumber:"1" },
+        { name:"Dinara Salimova", seat:"12", table:"Oncidium", tableNumber:"1" },
+        { name:"Ershat Salimov", seat:"13", table:"Oncidium", tableNumber:"1" },
+        { name:"Rustam Aksenenko", seat:"14", table:"Oncidium", tableNumber:"1" },
+        { name:"Ayman Sarsenova", seat:"15", table:"Oncidium", tableNumber:"1" },
+        { name:"Dias Suleimenov", seat:"16", table:"Oncidium", tableNumber:"1" },
+        { name:"Rachid Rizk", seat:"17", table:"Oncidium", tableNumber:"1" },
+        { name:"Jambulat Sarsenov", seat:"18", table:"Oncidium", tableNumber:"1" },
+        { name:"Caroline Scheufele", seat:"19", table:"Oncidium", tableNumber:"1" },
+        { name:"Kairat Krymov", seat:"20", table:"Oncidium", tableNumber:"1" },
+        { name:"Chahrazad Rizk", seat:"21", table:"Oncidium", tableNumber:"1" },
+        { name:"Svetlana Aksenenko", seat:"22", table:"Oncidium", tableNumber:"1" },
+        { name:"Daniyar Abulgazin", seat:"23", table:"Oncidium", tableNumber:"1" },
+        { name:"Aidana Suleimenova", seat:"24", table:"Oncidium", tableNumber:"1" },
+        { name:"Askar Izbassarov", seat:"25", table:"Oncidium", tableNumber:"1" },
+        { name:"Zaure Izbassarova", seat:"26", table:"Oncidium", tableNumber:"1" },
 
-        { name: "Evgenii Emelyanov", seat: "01", table: "Amaranth", tableNumber: "2" },
-        { name: "Adl Eskendirov", seat: "02", table: "Amaranth", tableNumber: "2" },
-        { name: "Adam Hogg", seat: "03", table: "Amaranth", tableNumber: "2" },
-        { name: "Panuar Karibayeva", seat: "04", table: "Amaranth", tableNumber: "2" },
-        { name: "Diana Hogg", seat: "05", table: "Amaranth", tableNumber: "2" },
-        { name: "Asyl Karibayev", seat: "06", table: "Amaranth", tableNumber: "2" },
+        { name:"Evgenii Emelyanov", seat:"01", table:"Amaranth", tableNumber:"2" },
+        { name:"Adl Eskendirov", seat:"02", table:"Amaranth", tableNumber:"2" },
+        { name:"Daniyar Tulemaganbetov", seat:"03", table:"Amaranth", tableNumber:"2" },
+        { name:"Adam Hogg", seat:"04", table:"Amaranth", tableNumber:"2" },
+        { name:"Panuar Karibayeva", seat:"05", table:"Amaranth", tableNumber:"2" },
+        { name:"Ekaterina Tulemaganbetova", seat:"06", table:"Amaranth", tableNumber:"2" },
+        { name:"Diana Hogg", seat:"07", table:"Amaranth", tableNumber:"2" },
+        { name:"Asyl Karibayev", seat:"08", table:"Amaranth", tableNumber:"2" },
 
-        { name: "Alan Aksenenko", seat: "01", table: "Dandelion", tableNumber: "3" },
-        { name: "Diar Izbassarov", seat: "02", table: "Dandelion", tableNumber: "3" },
-        { name: "Dana Shayakhmetova", seat: "03", table: "Dandelion", tableNumber: "3" },
-        { name: "Sara Suleimenova", seat: "04", table: "Dandelion", tableNumber: "3" },
-        { name: "Aya Izbassarova", seat: "05", table: "Dandelion", tableNumber: "3" },
-        { name: "Adema Shayakhmetova", seat: "06", table: "Dandelion", tableNumber: "3" },
-        { name: "Daniyar Shayakhmetov", seat: "07", table: "Dandelion", tableNumber: "3" },
-        { name: "Bogdan Aksenenko", seat: "08", table: "Dandelion", tableNumber: "3" },
-        { name: "Nursultan Suleimenov", seat: "09", table: "Dandelion", tableNumber: "3" },
-        { name: "Alina Abulgazina", seat: "10", table: "Dandelion", tableNumber: "3" },
-        { name: "Sara Hekal", seat: "11", table: "Dandelion", tableNumber: "3" },
-        { name: "Nour Rizk", seat: "12", table: "Dandelion", tableNumber: "3" },
-        { name: "Umitzhan Askar", seat: "13", table: "Dandelion", tableNumber: "3" },
-        { name: "Amina Ramazzanova", seat: "14", table: "Dandelion", tableNumber: "3" },
-        { name: "Altay Askar", seat: "15", table: "Dandelion", tableNumber: "3" },
-        { name: "Timur Suleimenov", seat: "16", table: "Dandelion", tableNumber: "3" },
-        { name: "Saken Shayakhmetov", seat: "17", table: "Dandelion", tableNumber: "3" },
-        { name: "Arslan Abulgazin", seat: "18", table: "Dandelion", tableNumber: "3" },
+        { name:"Alan Aksenenko", seat:"01", table:"Dandelion", tableNumber:"3" },
+        { name:"Diar Izbassarov", seat:"02", table:"Dandelion", tableNumber:"3" },
+        { name:"Dana Shayakhmetova", seat:"03", table:"Dandelion", tableNumber:"3" },
+        { name:"Sara Suleimenova", seat:"04", table:"Dandelion", tableNumber:"3" },
+        { name:"Aya Izbassarova", seat:"05", table:"Dandelion", tableNumber:"3" },
+        { name:"Aktang", seat:"06", table:"Dandelion", tableNumber:"3" },
+        { name:"Daniyar Shayakhmetov", seat:"07", table:"Dandelion", tableNumber:"3" },
+        { name:"Bogdan Aksenenko", seat:"08", table:"Dandelion", tableNumber:"3" },
+        { name:"Nursultan Suleimenov", seat:"09", table:"Dandelion", tableNumber:"3" },
+        { name:"Alina Abulgazina", seat:"10", table:"Dandelion", tableNumber:"3" },
+        { name:"Sara Hekal", seat:"11", table:"Dandelion", tableNumber:"3" },
+        { name:"Nour Rizk", seat:"12", table:"Dandelion", tableNumber:"3" },
+        { name:"Umitzhan Askar", seat:"13", table:"Dandelion", tableNumber:"3" },
+        { name:"Amina Ramazzanova", seat:"14", table:"Dandelion", tableNumber:"3" },
+        { name:"Altay Askar", seat:"15", table:"Dandelion", tableNumber:"3" },
+        { name:"Timur Suleimenov", seat:"16", table:"Dandelion", tableNumber:"3" },
+        { name:"Saken Shayakhmetov", seat:"17", table:"Dandelion", tableNumber:"3" },
+        { name:"Arslan Abulgazin", seat:"18", table:"Dandelion", tableNumber:"3" },
 
-        { name: "Sofiya", seat: "01", table: "Daisy", tableNumber: "4" },
-        { name: "Catherine", seat: "02", table: "Daisy", tableNumber: "4" },
-        { name: "Deniza", seat: "03", table: "Daisy", tableNumber: "4" },
-        { name: "Azhar", seat: "04", table: "Daisy", tableNumber: "4" },
-        { name: "Amalia", seat: "05", table: "Daisy", tableNumber: "4" },
-        { name: "Carmen", seat: "06", table: "Daisy", tableNumber: "4" },
-        { name: "Anwar", seat: "07", table: "Daisy", tableNumber: "4" },
-        { name: "Elvin", seat: "08", table: "Daisy", tableNumber: "4" },
-        { name: "Isabella", seat: "09", table: "Daisy", tableNumber: "4" },
-        { name: "Angie", seat: "10", table: "Daisy", tableNumber: "4" },
-        { name: "Timur A.", seat: "11", table: "Daisy", tableNumber: "4" },
-        { name: "Alexia", seat: "12", table: "Daisy", tableNumber: "4" },
-        { name: "Dias K.", seat: "13", table: "Daisy", tableNumber: "4" },
-        { name: "Polina", seat: "14", table: "Daisy", tableNumber: "4" },
-        { name: "Timur K.", seat: "15", table: "Daisy", tableNumber: "4" },
-        { name: "Soraya", seat: "16", table: "Daisy", tableNumber: "4" },
-        { name: "Katerina", seat: "17", table: "Daisy", tableNumber: "4" },
+        { name:"Sofiya", seat:"01", table:"Daisy", tableNumber:"4" },
+        { name:"Catherine", seat:"02", table:"Daisy", tableNumber:"4" },
+        { name:"Deniza", seat:"03", table:"Daisy", tableNumber:"4" },
+        { name:"Azhar", seat:"04", table:"Daisy", tableNumber:"4" },
+        { name:"Amalia", seat:"05", table:"Daisy", tableNumber:"4" },
+        { name:"Carmen", seat:"06", table:"Daisy", tableNumber:"4" },
+        { name:"Anwar", seat:"07", table:"Daisy", tableNumber:"4" },
+        { name:"Elvin", seat:"08", table:"Daisy", tableNumber:"4" },
+        { name:"Isabella", seat:"09", table:"Daisy", tableNumber:"4" },
+        { name:"Angie", seat:"10", table:"Daisy", tableNumber:"4" },
+        { name:"Timur A.", seat:"11", table:"Daisy", tableNumber:"4" },
+        { name:"Alexia", seat:"12", table:"Daisy", tableNumber:"4" },
+        { name:"Dias K.", seat:"13", table:"Daisy", tableNumber:"4" },
+        { name:"Polina", seat:"14", table:"Daisy", tableNumber:"4" },
+        { name:"Timur K.", seat:"15", table:"Daisy", tableNumber:"4" },
+        { name:"Soraya", seat:"16", table:"Daisy", tableNumber:"4" },
+        { name:"Katerina", seat:"17", table:"Daisy", tableNumber:"4" },
 
-        { name: "Kira", seat: "01", table: "Craspedia", tableNumber: "5" },
-        { name: "Julia", seat: "02", table: "Craspedia", tableNumber: "5" },
-        { name: "Temirlan", seat: "03", table: "Craspedia", tableNumber: "5" },
-        { name: "Askar", seat: "04", table: "Craspedia", tableNumber: "5" },
-        { name: "Alken", seat: "05", table: "Craspedia", tableNumber: "5" },
-        { name: "Kristina", seat: "06", table: "Craspedia", tableNumber: "5" },
-        { name: "Dinara", seat: "07", table: "Craspedia", tableNumber: "5" },
-        { name: "Alexandra", seat: "08", table: "Craspedia", tableNumber: "5" },
+        { name:"Kira", seat:"01", table:"Craspedia", tableNumber:"5" },
+        { name:"Julia", seat:"02", table:"Craspedia", tableNumber:"5" },
+        { name:"Temirlan", seat:"03", table:"Craspedia", tableNumber:"5" },
+        { name:"Askar", seat:"04", table:"Craspedia", tableNumber:"5" },
+        { name:"Alken", seat:"05", table:"Craspedia", tableNumber:"5" },
+        { name:"Kristina", seat:"06", table:"Craspedia", tableNumber:"5" },
+        { name:"Dinara", seat:"07", table:"Craspedia", tableNumber:"5" },
+        { name:"Alexandra", seat:"08", table:"Craspedia", tableNumber:"5" },
 
-        { name: "Timur I.", seat: "01", table: "Nerine", tableNumber: "6" },
-        { name: "Sonya", seat: "02", table: "Nerine", tableNumber: "6" },
-        { name: "Roman", seat: "03", table: "Nerine", tableNumber: "6" },
-        { name: "H.S.H. Princess Leatitia", seat: "04", table: "Nerine", tableNumber: "6" },
-        { name: "Leila", seat: "05", table: "Nerine", tableNumber: "6" },
-        { name: "Aidan", seat: "06", table: "Nerine", tableNumber: "6" },
-        { name: "Tore", seat: "07", table: "Nerine", tableNumber: "6" },
-        { name: "Anuar", seat: "08", table: "Nerine", tableNumber: "6" },
-        { name: "Aliar", seat: "09", table: "Nerine", tableNumber: "6" },
-        { name: "Zhanya", seat: "10", table: "Nerine", tableNumber: "6" },
-        { name: "Alicia", seat: "11", table: "Nerine", tableNumber: "6" },
-        { name: "Tiana", seat: "13", table: "Nerine", tableNumber: "6" }
+        { name:"Timur I.", seat:"01", table:"Nerine", tableNumber:"6" },
+        { name:"Sonya", seat:"02", table:"Nerine", tableNumber:"6" },
+        { name:"Roman", seat:"03", table:"Nerine", tableNumber:"6" },
+        { name:"H.S.H. Princess Leatitia", seat:"04", table:"Nerine", tableNumber:"6" },
+        { name:"Leila", seat:"05", table:"Nerine", tableNumber:"6" },
+        { name:"Aidan", seat:"06", table:"Nerine", tableNumber:"6" },
+        { name:"Tore", seat:"07", table:"Nerine", tableNumber:"6" },
+        { name:"Anuar", seat:"08", table:"Nerine", tableNumber:"6" },
+        { name:"Aliar", seat:"09", table:"Nerine", tableNumber:"6" },
+        { name:"Zhanya", seat:"10", table:"Nerine", tableNumber:"6" },
+        { name:"Alicia", seat:"11", table:"Nerine", tableNumber:"6" },
+        { name:"Tiana", seat:"13", table:"Nerine", tableNumber:"6" }
       ];
 
       const input = document.querySelector("#guest-search");
@@ -1156,84 +239,39 @@
 
       function celebrateBirthday() {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
         const colors = ["#b8891d", "#f05a3c", "#b94d73", "#76538f", "#4e7449"];
         const origin = birthdayTrigger.getBoundingClientRect();
-
         for (let index = 0; index < 14; index += 1) {
           const piece = document.createElement("span");
           piece.className = "confetti-piece";
           piece.style.background = colors[index % colors.length];
-          piece.style.setProperty(
-            "--confetti-left",
-            `${origin.left + origin.width / 2 + (Math.random() * 14 - 7)}px`
-          );
+          piece.style.setProperty("--confetti-left", `${origin.left + origin.width / 2 + (Math.random() * 14 - 7)}px`);
           piece.style.setProperty("--confetti-top", `${origin.bottom - 2}px`);
-          piece.style.setProperty(
-            "--confetti-drift",
-            `${Math.round(Math.random() * 110 - 55)}px`
-          );
-          piece.style.setProperty(
-            "--confetti-fall",
-            `${Math.round(80 + Math.random() * 70)}px`
-          );
-          piece.style.setProperty(
-            "--confetti-spin",
-            `${Math.round(Math.random() * 540 - 270)}deg`
-          );
-          piece.style.setProperty(
-            "--confetti-delay",
-            `${(Math.random() * 0.16).toFixed(2)}s`
-          );
+          piece.style.setProperty("--confetti-drift", `${Math.round(Math.random() * 110 - 55)}px`);
+          piece.style.setProperty("--confetti-fall", `${Math.round(80 + Math.random() * 70)}px`);
+          piece.style.setProperty("--confetti-spin", `${Math.round(Math.random() * 540 - 270)}deg`);
+          piece.style.setProperty("--confetti-delay", `${(Math.random() * .16).toFixed(2)}s`);
           document.body.append(piece);
           window.setTimeout(() => piece.remove(), 1700);
         }
       }
-
       birthdayTrigger.addEventListener("click", celebrateBirthday);
 
-      const normalize = (value) =>
-        value
-          .toLocaleLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .trim();
+      const normalize = (value) => value.toLocaleLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 
       function typoDistance(first, second) {
-        const rows = Array.from(
-          { length: first.length + 1 },
-          () => Array(second.length + 1).fill(0)
-        );
-
+        const rows = Array.from({ length:first.length + 1 }, () => Array(second.length + 1).fill(0));
         for (let row = 0; row <= first.length; row += 1) rows[row][0] = row;
-        for (let column = 0; column <= second.length; column += 1) {
-          rows[0][column] = column;
-        }
-
+        for (let column = 0; column <= second.length; column += 1) rows[0][column] = column;
         for (let row = 1; row <= first.length; row += 1) {
           for (let column = 1; column <= second.length; column += 1) {
-            const substitutionCost =
-              first[row - 1] === second[column - 1] ? 0 : 1;
-            rows[row][column] = Math.min(
-              rows[row - 1][column] + 1,
-              rows[row][column - 1] + 1,
-              rows[row - 1][column - 1] + substitutionCost
-            );
-
-            if (
-              row > 1 &&
-              column > 1 &&
-              first[row - 1] === second[column - 2] &&
-              first[row - 2] === second[column - 1]
-            ) {
-              rows[row][column] = Math.min(
-                rows[row][column],
-                rows[row - 2][column - 2] + 1
-              );
+            const substitutionCost = first[row - 1] === second[column - 1] ? 0 : 1;
+            rows[row][column] = Math.min(rows[row - 1][column] + 1, rows[row][column - 1] + 1, rows[row - 1][column - 1] + substitutionCost);
+            if (row > 1 && column > 1 && first[row - 1] === second[column - 2] && first[row - 2] === second[column - 1]) {
+              rows[row][column] = Math.min(rows[row][column], rows[row - 2][column - 2] + 1);
             }
           }
         }
-
         return rows[first.length][second.length];
       }
 
@@ -1241,51 +279,30 @@
         const target = normalize(name);
         const words = target.split(/\s+/);
         let bestScore = 0;
-
         if (target === query) return 1000;
         if (target.startsWith(query)) return 800 - target.length;
         if (words.some((word) => word.startsWith(query))) return 650 - target.length;
-
         const index = target.indexOf(query);
         if (index !== -1) bestScore = 500 - index * 10 - target.length;
-
         let cursor = 0;
         for (const character of target) {
           if (character === query[cursor]) cursor += 1;
-          if (cursor === query.length) {
-            bestScore = Math.max(bestScore, 250 - target.length);
-            break;
-          }
+          if (cursor === query.length) { bestScore = Math.max(bestScore, 250 - target.length); break; }
         }
-
         if (query.length >= 2) {
           const compactTarget = target.replace(/[^a-z0-9]/g, "");
           const candidates = [target, compactTarget, ...words];
-
           for (const candidate of candidates) {
             const distance = typoDistance(candidate, query);
             const longestLength = Math.max(candidate.length, query.length);
             const similarity = 1 - distance / longestLength;
-            const allowedDistance = Math.max(1, Math.ceil(query.length * 0.3));
-            const isShortNameTypo =
-              query.length === 2 && candidate.length === 3 && distance === 1;
-
-            if (
-              isShortNameTypo ||
-              (query.length >= 3 &&
-                distance <= allowedDistance &&
-                similarity >= 0.65)
-            ) {
-              bestScore = Math.max(
-                bestScore,
-                (isShortNameTypo ? 610 : 340) +
-                  Math.round(similarity * 100) -
-                  distance * 8
-              );
+            const allowedDistance = Math.max(1, Math.ceil(query.length * .3));
+            const isShortNameTypo = query.length === 2 && candidate.length === 3 && distance === 1;
+            if (isShortNameTypo || (query.length >= 3 && distance <= allowedDistance && similarity >= .65)) {
+              bestScore = Math.max(bestScore, (isShortNameTypo ? 610 : 340) + Math.round(similarity * 100) - distance * 8);
             }
           }
         }
-
         return bestScore;
       }
 
@@ -1293,12 +310,7 @@
         const container = document.createElement("span");
         const normalizedName = normalize(name);
         const index = normalizedName.indexOf(query);
-
-        if (index === -1) {
-          container.textContent = name;
-          return container.innerHTML;
-        }
-
+        if (index === -1) { container.textContent = name; return container.innerHTML; }
         container.append(document.createTextNode(name.slice(0, index)));
         const mark = document.createElement("mark");
         mark.textContent = name.slice(index, index + query.length);
@@ -1307,138 +319,51 @@
       }
 
       function showPrompt() {
-        results.innerHTML = `
-          <div class="prompt-state">
-            <div class="prompt-mark" aria-hidden="true">✦</div>
-            <h2 class="state-title">Your place is waiting</h2>
-            <p class="state-copy">Try a first name, surname, or just the first few letters.</p>
-          </div>
-        `;
+        results.innerHTML = `<div class="prompt-state"><div class="prompt-mark" aria-hidden="true">✦</div><h2 class="state-title">Your place is waiting</h2><p class="state-copy">Try a first name, surname, or just the first few letters.</p></div>`;
       }
 
       function showNoResults() {
-        results.innerHTML = `
-          <div class="empty-state">
-            <div class="prompt-mark" aria-hidden="true">?</div>
-            <h2 class="state-title">We couldn’t find that name</h2>
-            <p class="state-copy">Check the spelling or ask the welcome team for a little help.</p>
-          </div>
-        `;
+        results.innerHTML = `<div class="empty-state"><div class="prompt-mark" aria-hidden="true">?</div><h2 class="state-title">We couldn’t find that name</h2><p class="state-copy">Check the spelling or ask the welcome team for a little help.</p></div>`;
       }
 
       const tableLayouts = {
-        Oncidium: { shape: "rectangle", firstSideSeats: 11 },
-        Amaranth: { shape: "round" },
-        Dandelion: { shape: "rectangle", firstSideSeats: 9 },
-        Daisy: { shape: "round" },
-        Craspedia: { shape: "round" },
-        Nerine: { shape: "rectangle", firstSideSeats: 7, firstSide: "left" }
+        Oncidium:{ shape:"rectangle", firstSideSeats:11 },
+        Amaranth:{ shape:"round" },
+        Dandelion:{ shape:"rectangle", firstSideSeats:9 },
+        Daisy:{ shape:"round" },
+        Craspedia:{ shape:"round" },
+        Nerine:{ shape:"rectangle", firstSideSeats:7, firstSide:"left" }
       };
 
       const venueTables = [
-        {
-          name: "Nerine",
-          number: "6",
-          shape: "rectangle",
-          x: 230,
-          y: 280,
-          width: 92,
-          height: 170,
-          focusWidth: 160,
-          focusHeight: 270,
-          flowerColor: "#b94d73"
-        },
-        {
-          name: "Amaranth",
-          number: "2",
-          shape: "round",
-          x: 450,
-          y: 220,
-          width: 96,
-          height: 96,
-          focusWidth: 190,
-          focusHeight: 190,
-          flowerColor: "#963e5a"
-        },
-        {
-          name: "Oncidium",
-          number: "1",
-          shape: "rectangle",
-          x: 680,
-          y: 240,
-          width: 118,
-          height: 230,
-          focusWidth: 190,
-          focusHeight: 320,
-          flowerColor: "#76538f"
-        },
-        {
-          name: "Craspedia",
-          number: "5",
-          shape: "round",
-          x: 220,
-          y: 560,
-          width: 118,
-          height: 118,
-          focusWidth: 210,
-          focusHeight: 210,
-          flowerColor: "#a85d0a"
-        },
-        {
-          name: "Daisy",
-          number: "4",
-          shape: "round",
-          x: 430,
-          y: 560,
-          width: 160,
-          height: 160,
-          focusWidth: 260,
-          focusHeight: 260,
-          flowerColor: "#4e7449"
-        },
-        {
-          name: "Dandelion",
-          number: "3",
-          shape: "rectangle",
-          x: 650,
-          y: 520,
-          width: 110,
-          height: 205,
-          focusWidth: 180,
-          focusHeight: 300,
-          flowerColor: "#9a6b00"
-        }
+        { name:"Nerine", number:"6", shape:"rectangle", x:230, y:280, width:92, height:170, focusWidth:160, focusHeight:270, flowerColor:"#b94d73" },
+        { name:"Amaranth", number:"2", shape:"round", x:450, y:220, width:96, height:96, focusWidth:190, focusHeight:190, flowerColor:"#963e5a" },
+        { name:"Oncidium", number:"1", shape:"rectangle", x:680, y:240, width:118, height:230, focusWidth:190, focusHeight:320, flowerColor:"#76538f" },
+        { name:"Craspedia", number:"5", shape:"round", x:220, y:560, width:118, height:118, focusWidth:210, focusHeight:210, flowerColor:"#a85d0a" },
+        { name:"Daisy", number:"4", shape:"round", x:430, y:560, width:160, height:160, focusWidth:260, focusHeight:260, flowerColor:"#4e7449" },
+        { name:"Dandelion", number:"3", shape:"rectangle", x:650, y:520, width:110, height:205, focusWidth:180, focusHeight:300, flowerColor:"#9a6b00" }
       ];
 
       function getTableColor(tableName) {
-        return (
-          venueTables.find((table) => table.name === tableName)?.flowerColor ||
-          "#121310"
-        );
+        return venueTables.find((table) => table.name === tableName)?.flowerColor || "#121310";
       }
 
       function getSeatPosition(index, count, layout) {
         if (layout.shape === "round") {
           const angle = (90 - index * (360 / count)) * (Math.PI / 180);
-          return {
-            x: 50 + 42 * Math.cos(angle),
-            y: 50 + 42 * Math.sin(angle)
-          };
+          return { x:50 + 42 * Math.cos(angle), y:50 + 42 * Math.sin(angle) };
         }
-
         const firstSideSeats = layout.firstSideSeats;
         const firstSideX = layout.firstSide === "left" ? 24 : 76;
         const secondSideX = layout.firstSide === "left" ? 76 : 24;
         if (index < firstSideSeats) {
-          const progress = firstSideSeats === 1 ? 0.5 : index / (firstSideSeats - 1);
-          return { x: firstSideX, y: 8 + progress * 84 };
+          const progress = firstSideSeats === 1 ? .5 : index / (firstSideSeats - 1);
+          return { x:firstSideX, y:8 + progress * 84 };
         }
-
         const secondSideSeats = count - firstSideSeats;
         const secondIndex = index - firstSideSeats;
-        const progress =
-          secondSideSeats === 1 ? 0.5 : secondIndex / (secondSideSeats - 1);
-        return { x: secondSideX, y: 92 - progress * 84 };
+        const progress = secondSideSeats === 1 ? .5 : secondIndex / (secondSideSeats - 1);
+        return { x:secondSideX, y:92 - progress * 84 };
       }
 
       function getTableSeatCount(tableGuests) {
@@ -1446,23 +371,18 @@
       }
 
       function getSeatContext(guest) {
-        const tableGuests = guests.filter(
-          (person) => person.tableNumber === guest.tableNumber
-        );
+        const tableGuests = guests.filter((person) => person.tableNumber === guest.tableNumber);
         const seatNumber = Number(guest.seat);
         const seatCount = getTableSeatCount(tableGuests);
         const layout = tableLayouts[guest.table];
         const neighbours = [];
         let positionLabel = "";
-        const guestAtSeat = (number) =>
-          tableGuests.find((person) => Number(person.seat) === number);
-
+        const guestAtSeat = (number) => tableGuests.find((person) => Number(person.seat) === number);
         if (layout.shape === "round") {
           const previousGuest = guestAtSeat(seatNumber === 1 ? seatCount : seatNumber - 1);
           const nextGuest = guestAtSeat(seatNumber === seatCount ? 1 : seatNumber + 1);
           if (previousGuest) neighbours.push(previousGuest);
           if (nextGuest) neighbours.push(nextGuest);
-
           const position = getSeatPosition(seatNumber - 1, seatCount, layout);
           const vertical = position.y < 35 ? "top" : position.y > 65 ? "bottom" : "";
           const horizontal = position.x < 35 ? "left" : position.x > 65 ? "right" : "";
@@ -1473,18 +393,12 @@
           const secondSide = firstSide === "right" ? "left" : "right";
           const sideStart = seatNumber <= firstSideSeats ? 1 : firstSideSeats + 1;
           const sideEnd = seatNumber <= firstSideSeats ? firstSideSeats : seatCount;
-          const previousGuest = seatNumber > sideStart
-            ? guestAtSeat(seatNumber - 1)
-            : null;
-          const nextGuest = seatNumber < sideEnd
-            ? guestAtSeat(seatNumber + 1)
-            : null;
-
+          const previousGuest = seatNumber > sideStart ? guestAtSeat(seatNumber - 1) : null;
+          const nextGuest = seatNumber < sideEnd ? guestAtSeat(seatNumber + 1) : null;
           if (previousGuest) neighbours.push(previousGuest);
           if (nextGuest) neighbours.push(nextGuest);
           positionLabel = `${seatNumber <= firstSideSeats ? firstSide : secondSide} side of the table`;
         }
-
         return { neighbours, positionLabel };
       }
 
@@ -1496,163 +410,62 @@
 
       function renderVenueTable(table, guest) {
         const isSelected = table.number === guest.tableNumber;
-        const tableGuests = isSelected
-          ? guests.filter((person) => person.tableNumber === table.number)
-          : [];
+        const tableGuests = isSelected ? guests.filter((person) => person.tableNumber === table.number) : [];
         const layout = tableLayouts[guest.table];
         let markers = "";
         let youMarker = "";
-
         if (isSelected) {
           const seatCount = getTableSeatCount(tableGuests);
           const selectedIndex = Number(guest.seat) - 1;
           const { neighbours } = getSeatContext(guest);
-          markers = Array.from({ length: seatCount }, (_, seatIndex) => {
-              const person = tableGuests.find(
-                (tableGuest) => Number(tableGuest.seat) === seatIndex + 1
-              );
-              const position = getSeatPosition(seatIndex, seatCount, layout);
-              const selected = person === guest ? " selected" : "";
-              const neighbour = neighbours.includes(person) ? " neighbour" : "";
-              const empty = person ? "" : " empty";
-              return `
-                <span
-                  class="map-seat${selected}${neighbour}${empty}"
-                  style="left:${position.x}%; top:${position.y}%"
-                  aria-hidden="true"
-                ></span>
-              `;
-            })
-            .join("");
+          markers = Array.from({ length:seatCount }, (_, seatIndex) => {
+            const person = tableGuests.find((tableGuest) => Number(tableGuest.seat) === seatIndex + 1);
 
-          const selectedPosition = getSeatPosition(
-            selectedIndex,
-            seatCount,
-            layout
-          );
-          youMarker = `
-            <span
-              class="map-you"
-              style="left:${selectedPosition.x}%; top:${selectedPosition.y}%"
-              aria-hidden="true"
-            >You</span>
-          `;
+            // Nerine has no physical chair at the unused seat 12, so it is not drawn.
+            if (!person && guest.table === "Nerine") return "";
+
+            const position = getSeatPosition(seatIndex, seatCount, layout);
+            const selected = person === guest ? " selected" : "";
+            const neighbour = neighbours.includes(person) ? " neighbour" : "";
+            const empty = person ? "" : " empty";
+            return `<span class="map-seat${selected}${neighbour}${empty}" style="left:${position.x}%; top:${position.y}%" aria-hidden="true"></span>`;
+          }).join("");
+          const selectedPosition = getSeatPosition(selectedIndex, seatCount, layout);
+          youMarker = `<span class="map-you" style="left:${selectedPosition.x}%; top:${selectedPosition.y}%" aria-hidden="true">You</span>`;
         }
-
-        return `
-          <div
-            class="venue-table ${table.shape} ${isSelected ? "is-selected" : ""} ${tableGuests.length > 20 ? "dense" : ""}"
-            style="
-              left:${table.x}px;
-              top:${table.y}px;
-              --table-width:${table.width}px;
-              --table-height:${table.height}px;
-              --focus-width:${table.focusWidth}px;
-              --focus-height:${table.focusHeight}px;
-              --flower-color:${table.flowerColor};
-            "
-          >
-            <div class="venue-table-core">
-              <span>${table.name}</span>
-            </div>
-            ${markers}
-            ${youMarker}
-          </div>
-        `;
+        return `<div class="venue-table ${table.shape} ${isSelected ? "is-selected" : ""} ${tableGuests.length > 20 ? "dense" : ""}" style="left:${table.x}px; top:${table.y}px; --table-width:${table.width}px; --table-height:${table.height}px; --focus-width:${table.focusWidth}px; --focus-height:${table.focusHeight}px; --flower-color:${table.flowerColor};"><div class="venue-table-core"><span>${table.name}</span></div>${markers}${youMarker}</div>`;
       }
 
       function renderVenueMap(guest) {
         const { neighbours, positionLabel } = getSeatContext(guest);
         const neighbourNames = formatNeighbourNames(neighbours);
-        const tableGuests = guests.filter(
-          (person) => person.tableNumber === guest.tableNumber
-        );
-        const hasEmptyChair = getTableSeatCount(tableGuests) > tableGuests.length;
-        const neighbourDescription = neighbours.length
-          ? `Beside ${neighbourNames}.`
-          : "The adjacent chair is empty.";
-        return `
-          <div
-            class="venue-map-viewport"
-            role="img"
-            aria-label="Venue map centered on ${guest.table}. Seat ${guest.seat}, ${positionLabel}. ${neighbourDescription}"
-          >
-            <div class="venue-map">
-              ${venueTables.map((table) => renderVenueTable(table, guest)).join("")}
-            </div>
-          </div>
-          <p class="map-key">
-            <span class="map-key-item"><span class="map-key-dot"></span>Your seat</span>
-            ${neighbours.length ? `<span class="map-key-item"><span class="map-key-dot neighbour"></span>Beside you</span>` : ""}
-            ${hasEmptyChair ? `<span class="map-key-item"><span class="map-key-dot empty"></span>Empty chair</span>` : ""}
-          </p>
-          <p class="map-help">Drag to explore the full venue</p>
-        `;
+        const tableGuests = guests.filter((person) => person.tableNumber === guest.tableNumber);
+        const hasEmptyChair = guest.table !== "Nerine" && getTableSeatCount(tableGuests) > tableGuests.length;
+        const neighbourDescription = neighbours.length ? `Beside ${neighbourNames}.` : "The adjacent chair is empty.";
+        return `<div class="venue-map-viewport" role="img" aria-label="Venue map centered on ${guest.table}. Seat ${guest.seat}, ${positionLabel}. ${neighbourDescription}"><div class="venue-map">${venueTables.map((table) => renderVenueTable(table, guest)).join("")}</div></div><p class="map-key"><span class="map-key-item"><span class="map-key-dot"></span>Your seat</span>${neighbours.length ? `<span class="map-key-item"><span class="map-key-dot neighbour"></span>Beside you</span>` : ""}${hasEmptyChair ? `<span class="map-key-item"><span class="map-key-dot empty"></span>Empty chair</span>` : ""}</p><p class="map-help">Drag to explore the full venue</p>`;
       }
 
       function renderMapExperience(guest) {
         const { neighbours, positionLabel } = getSeatContext(guest);
-        return `
-          <div class="map-wrap">
-            <p class="map-heading">Your exact position</p>
-            <p class="seat-context">
-              Seat ${guest.seat} · ${positionLabel}<br>
-              ${neighbours.length
-                ? `Beside <strong>${formatNeighbourNames(neighbours)}</strong>`
-                : `<strong>The adjacent chair is empty</strong>`}
-            </p>
-            ${renderVenueMap(guest)}
-          </div>
-        `;
+        return `<div class="map-wrap"><p class="map-heading">Your exact position</p><p class="seat-context">Seat ${guest.seat} · ${positionLabel}<br>${neighbours.length ? `Beside <strong>${formatNeighbourNames(neighbours)}</strong>` : `<strong>The adjacent chair is empty</strong>`}</p>${renderVenueMap(guest)}</div>`;
       }
 
       function centerVenueMap(guest) {
         const viewport = results.querySelector(".venue-map-viewport");
-        const table = venueTables.find(
-          (venueTable) => venueTable.number === guest.tableNumber
-        );
+        const table = venueTables.find((venueTable) => venueTable.number === guest.tableNumber);
         if (!viewport || !table) return;
-
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            viewport.scrollLeft = Math.max(
-              0,
-              table.x - viewport.clientWidth / 2
-            );
-            viewport.scrollTop = Math.max(
-              0,
-              table.y - viewport.clientHeight / 2
-            );
-            window.scrollTo(0, window.scrollY);
-          });
-        });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          viewport.scrollLeft = Math.max(0, table.x - viewport.clientWidth / 2);
+          viewport.scrollTop = Math.max(0, table.y - viewport.clientHeight / 2);
+          window.scrollTo(0, window.scrollY);
+        }));
       }
 
       function selectGuest(guest) {
         shell.classList.add("result-mode");
-        results.innerHTML = `
-          <div class="confirmation">
-            <div>
-              <p class="confirmed-label">Welcome</p>
-              <h2 class="confirmed-name">${guest.name}</h2>
-              <div
-                class="table-reveal"
-                style="--flower-color:${getTableColor(guest.table)}"
-              >
-                <p class="table-kicker">Your table</p>
-                <p class="table-assignment">
-                  <span class="flower-name">${guest.table}</span>
-                </p>
-              </div>
-              ${renderMapExperience(guest)}
-              <button class="back-button" type="button">Search another name</button>
-            </div>
-          </div>
-        `;
-
+        results.innerHTML = `<div class="confirmation"><div><p class="confirmed-label">Welcome</p><h2 class="confirmed-name">${guest.name}</h2><div class="table-reveal" style="--flower-color:${getTableColor(guest.table)}"><p class="table-kicker">Your table</p><p class="table-assignment"><span class="flower-name">${guest.table}</span></p></div>${renderMapExperience(guest)}<button class="back-button" type="button">Search another name</button></div></div>`;
         window.scrollTo(0, 0);
         centerVenueMap(guest);
-
         results.querySelector(".back-button").addEventListener("click", () => {
           shell.classList.remove("result-mode");
           input.value = "";
@@ -1666,60 +479,17 @@
       function updateResults() {
         const query = normalize(input.value);
         clearButton.classList.toggle("visible", Boolean(input.value));
-
-        if (!query) {
-          showPrompt();
-          return;
-        }
-
-        const matches = guests
-          .map((guest, guestIndex) => ({
-            guest,
-            guestIndex,
-            score: scoreName(guest.name, query)
-          }))
+        if (!query) { showPrompt(); return; }
+        const matches = guests.map((guest, guestIndex) => ({ guest, guestIndex, score:scoreName(guest.name, query) }))
           .filter((item) => item.score > 0)
           .sort((a, b) => b.score - a.score || a.guest.name.localeCompare(b.guest.name))
           .slice(0, query.length <= 2 ? 10 : 5);
-
-        if (!matches.length) {
-          showNoResults();
-          return;
-        }
-
-        results.innerHTML = `
-          <ul class="match-list" aria-label="Matching guests">
-            ${matches
-              .map(
-                ({ guest, guestIndex }, index) => `
-                  <li>
-                    <button class="match ${index === 0 ? "best" : ""}" type="button" data-guest-index="${guestIndex}">
-                      <span>
-                        <span class="match-name">${safeHighlightedName(guest.name, query)}</span>
-                        <span class="match-detail">
-                          <span>${index === 0 ? "Best match" : "Possible match"}</span>
-                          <span aria-hidden="true">·</span>
-                          <span
-                            class="flower-name"
-                            style="--flower-color:${getTableColor(guest.table)}"
-                          >${guest.table}</span>
-                        </span>
-                      </span>
-                      <span class="match-arrow" aria-hidden="true">→</span>
-                    </button>
-                  </li>
-                `
-              )
-              .join("")}
-          </ul>
-        `;
-
-        results.querySelectorAll(".match").forEach((button) => {
-          button.addEventListener("click", () => {
-            const guest = guests[Number(button.dataset.guestIndex)];
-            if (guest) selectGuest(guest);
-          });
-        });
+        if (!matches.length) { showNoResults(); return; }
+        results.innerHTML = `<ul class="match-list" aria-label="Matching guests">${matches.map(({ guest, guestIndex }, index) => `<li><button class="match ${index === 0 ? "best" : ""}" type="button" data-guest-index="${guestIndex}"><span><span class="match-name">${safeHighlightedName(guest.name, query)}</span><span class="match-detail"><span>${index === 0 ? "Best match" : "Possible match"}</span><span aria-hidden="true">·</span><span class="flower-name" style="--flower-color:${getTableColor(guest.table)}">${guest.table}</span></span></span><span class="match-arrow" aria-hidden="true">→</span></button></li>`).join("")}</ul>`;
+        results.querySelectorAll(".match").forEach((button) => button.addEventListener("click", () => {
+          const guest = guests[Number(button.dataset.guestIndex)];
+          if (guest) selectGuest(guest);
+        }));
       }
 
       input.addEventListener("input", updateResults);
@@ -1729,13 +499,7 @@
           if (bestMatch) bestMatch.click();
         }
       });
-
-      clearButton.addEventListener("click", () => {
-        input.value = "";
-        updateResults();
-        input.focus();
-      });
-
+      clearButton.addEventListener("click", () => { input.value = ""; updateResults(); input.focus(); });
       showPrompt();
     </script>
   </body>
